@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.recyclerview.widget.RecyclerView
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartModel
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartType
@@ -12,7 +13,7 @@ import com.github.aachartmodel.aainfographics.aachartcreator.AAChartView
 import com.github.aachartmodel.aainfographics.aachartcreator.AASeriesElement
 
 // recyclerview içindeki nesnelerin durumlarına buradan erişiliyor. Adapter sınıfı parametre olarak recyclerview içinde kullanılacak listeyi alıyor.
-class ItemAdapter(private val items: MutableList<PiyasaBilgisi>) : RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
+class ItemAdapter(private var items: MutableList<PiyasaBilgisi>) : RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
 
     // layout ilk oluşturulduğunda buraya gelecek. Görüldüğü gibi recyclerview_item.xml dosyasında belirtilen layout oluşturularak recyclerviewda gösterilmek üzere ekleniyor.
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -26,6 +27,13 @@ class ItemAdapter(private val items: MutableList<PiyasaBilgisi>) : RecyclerView.
 
     // listedeki toplam nesne sayısı
     override fun getItemCount() = items.size
+
+    // tablar arasında geçiş yaptığımızda listeyi de değiştiriyor.
+    fun notifyListChange(list: MutableList<PiyasaBilgisi>){
+        items = list
+        notifyDataSetChanged()
+    }
+
 
     // adapter sınıfı her satırdaki değerleri ayrı viewholderlara ayırdığından her bir viewholder nesnesinin değerlerini bu sınıf içinde atıyoruz.
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
@@ -53,18 +61,31 @@ class ItemAdapter(private val items: MutableList<PiyasaBilgisi>) : RecyclerView.
                 handleFavIcon(info.isFav)
             }
 
+            // oluşturulan model chartviewa ekleniyor
+            chart.aa_drawChartWithChartModel(createChartModel(info))
+        }
+
+        private fun createChartModel(info: PiyasaBilgisi): AAChartModel{
             // info nesnesinin içinde tutulan price geçmişi listesinden yararlanarak bir chart oluşturuluyor.
             // kısıtlı alana sahip olduğumuz için labellar kapatıldı. Info nesnesinin fiyat geçmişi listesi arraya dönüştürüldü.
             val chartModel = AAChartModel().chartType(AAChartType.Line)
-                .backgroundColor("#ffffff")
                 .series(arrayOf(AASeriesElement().data(info.price.toTypedArray())))
+
+            // uygulamanın temasına göre chart arka plan rengi de değiştiriliyor.
+            if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES){
+                chartModel.backgroundColor = "#787878"
+            }
+            else{
+                chartModel.backgroundColor = "#ffffff"
+            }
             chartModel.xAxisLabelsEnabled = false
             chartModel.yAxisLabelsEnabled = false
             chartModel.legendEnabled = false
             chartModel.dataLabelsEnabled = false
             chartModel.markerRadius = 1f
-            // oluşturulan model chartviewa ekleniyor
-            chart.aa_drawChartWithChartModel(chartModel)
+            chartModel.tooltipEnabled = false
+            
+            return chartModel
         }
 
         // döviz/ hisse senedinin favoriye eklenmesi durumunda ikondaki değişiklik sağlanıyor.
