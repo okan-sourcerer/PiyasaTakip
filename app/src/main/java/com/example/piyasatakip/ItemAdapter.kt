@@ -6,11 +6,13 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.view.drawToBitmap
 import androidx.recyclerview.widget.RecyclerView
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartModel
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartType
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartView
 import com.github.aachartmodel.aainfographics.aachartcreator.AASeriesElement
+import com.github.aachartmodel.aainfographics.aaoptionsmodel.AASeries
 
 // recyclerview içindeki nesnelerin durumlarına buradan erişiliyor. Adapter sınıfı parametre olarak recyclerview içinde kullanılacak listeyi alıyor.
 class ItemAdapter(private var items: MutableList<PiyasaBilgisi>) : RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
@@ -62,31 +64,11 @@ class ItemAdapter(private var items: MutableList<PiyasaBilgisi>) : RecyclerView.
             }
 
             // oluşturulan model chartviewa ekleniyor
-            chart.aa_drawChartWithChartModel(createChartModel(info))
+            val chartModel = ChartHandler.setData(info)
+            //chart.setImageBitmap(ChartHandler.getBitmapOfChart(info, itemView.context))
+            chart.aa_drawChartWithChartModel(chartModel)
         }
 
-        private fun createChartModel(info: PiyasaBilgisi): AAChartModel{
-            // info nesnesinin içinde tutulan price geçmişi listesinden yararlanarak bir chart oluşturuluyor.
-            // kısıtlı alana sahip olduğumuz için labellar kapatıldı. Info nesnesinin fiyat geçmişi listesi arraya dönüştürüldü.
-            val chartModel = AAChartModel().chartType(AAChartType.Line)
-                .series(arrayOf(AASeriesElement().data(info.price.toTypedArray())))
-
-            // uygulamanın temasına göre chart arka plan rengi de değiştiriliyor.
-            if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES){
-                chartModel.backgroundColor = "#787878"
-            }
-            else{
-                chartModel.backgroundColor = "#ffffff"
-            }
-            chartModel.xAxisLabelsEnabled = false
-            chartModel.yAxisLabelsEnabled = false
-            chartModel.legendEnabled = false
-            chartModel.dataLabelsEnabled = false
-            chartModel.markerRadius = 1f
-            chartModel.tooltipEnabled = false
-            
-            return chartModel
-        }
 
         // döviz/ hisse senedinin favoriye eklenmesi durumunda ikondaki değişiklik sağlanıyor.
         private fun handleFavIcon(isFav: Boolean){

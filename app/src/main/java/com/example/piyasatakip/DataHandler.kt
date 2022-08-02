@@ -26,7 +26,7 @@ object DataHandler {
         priceList.add(45.47)
 
         // yeni bir nesne oluşturarak listemize ekliyoruz. Şimdilik statik veriler kullanılıyor.
-        hisseList.add(PiyasaBilgisi("YK", "MONDI OLMUKSAN KAGIT VE AMBALAJ", priceList, "+1.15", true))
+        hisseList.add(PiyasaBilgisi("YK", "Yapı Kredi", priceList, "+1.15", true, "Hisse"))
     }
 
     // Statik verilerle döviz verileri oluşturuluyor. Yukarıdaki bilgiler bunun için de geçerli.
@@ -38,6 +38,6 @@ object DataHandler {
         dovizPriceList.add(9.0)
         dovizPriceList.add(11.20)
         dovizPriceList.add(10.15)
-        dovizList.add(PiyasaBilgisi("USD", "Dolar", dovizPriceList, "+1", true))
+        dovizList.add(PiyasaBilgisi("USD", "Dolar", dovizPriceList, "+1", true, "Döviz"))
     }
 }

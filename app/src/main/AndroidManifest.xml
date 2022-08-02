@@ -13,6 +13,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PiyasaTakip"
         tools:targetApi="31">
+        <receiver
+            android:name=".Widget"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_info" />
+        </receiver>
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -22,6 +34,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service android:name=".WidgetService"
+            android:permission="android.permission.BIND_REMOTEVIEWS"
+            android:exported="false" />
+
     </application>
 
 </manifest>

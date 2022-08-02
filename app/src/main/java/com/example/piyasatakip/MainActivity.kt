@@ -1,22 +1,35 @@
 package com.example.piyasatakip
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
+import android.view.*
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.RelativeLayout
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.text.HtmlCompat
+import androidx.core.view.drawToBitmap
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.anychart.AnyChart
+import com.anychart.AnyChartView
+import com.anychart.chart.common.dataentry.DataEntry
+import com.anychart.chart.common.dataentry.ValueDataEntry
+import com.anychart.charts.Cartesian
 import com.example.piyasatakip.DataHandler.dovizList
 import com.example.piyasatakip.DataHandler.hisseList
 import com.google.android.material.tabs.TabLayout
+
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
 
     private lateinit var tabLayout: TabLayout
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,23 +57,22 @@ class MainActivity : AppCompatActivity() {
             R.id.search_button -> TODO("Search view eklenecek. Her karakter yazıldığında tekrar query yapılacak.")
 
             // Temalar arasında geçiş yapabilmek için ikona basılabilir. Aynı zamanda tema değiştirildiğinde bunu kaydediyor.
-            R.id.themeSwitcher ->
-                item.setOnMenuItemClickListener {
-                    val currMode = AppCompatDelegate.getDefaultNightMode()
+            R.id.themeSwitcher -> {
+                val currMode = AppCompatDelegate.getDefaultNightMode()
 
-                    // temalar arasında toggle
-                    if (currMode == AppCompatDelegate.MODE_NIGHT_YES){
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                        delegate.applyDayNight()
-                        SavedPreference.setChecktheme(applicationContext, SavedPreference.LIGHT_MODE)
-                    }
-                    else{
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                        delegate.applyDayNight()
-                        SavedPreference.setChecktheme(applicationContext, SavedPreference.DARK_MODE)
-                    }
-                    true
+                // temalar arasında toggle
+                if (currMode == AppCompatDelegate.MODE_NIGHT_YES) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    delegate.applyDayNight()
+                    SavedPreference.setChecktheme(applicationContext, SavedPreference.LIGHT_MODE)
+                    ChartHandler.toggleChartTheme()
+                } else {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    delegate.applyDayNight()
+                    SavedPreference.setChecktheme(applicationContext, SavedPreference.DARK_MODE)
+                    ChartHandler.toggleChartTheme()
                 }
+            }
         }
         return true
     }

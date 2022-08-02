@@ -29,6 +29,9 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    buildFeatures {
+        viewBinding true
+    }
 }
 
 dependencies {
@@ -43,4 +46,5 @@ dependencies {
 
     implementation 'androidx.preference:preference:1.1.1'
     implementation 'com.github.AAChartModel:AAChartCore-Kotlin:-SNAPSHOT'
+    implementation 'com.github.AnyChart:AnyChart-Android:1.1.2'
 }

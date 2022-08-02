@@ -6,7 +6,8 @@
         android:id="@+id/search_button"
         android:icon="@drawable/ic_baseline_search_24"
         app:showAsAction="always"
-        android:title="Search" />
+        android:title="Search"
+        />
 
     <item
         android:id="@+id/themeSwitcher"
