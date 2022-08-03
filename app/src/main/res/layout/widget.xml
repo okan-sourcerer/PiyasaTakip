@@ -2,7 +2,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="8dp"
-    android:id="@+id/widget_background">
+    android:id="@+id/widget_background"
+    android:background="@drawable/app_widget_background"
+    android:theme="@android:style/Theme.DeviceDefault.DayNight"
+    >
 
 
     <ListView
@@ -11,7 +14,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:loopViews="true"
-        android:background="@color/white"/>
+        />
 
     <TextView
         android:id="@+id/empty_view"
