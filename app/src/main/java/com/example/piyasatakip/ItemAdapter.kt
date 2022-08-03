@@ -1,5 +1,6 @@
 package com.example.piyasatakip
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +16,9 @@ import com.github.aachartmodel.aainfographics.aachartcreator.AASeriesElement
 import com.github.aachartmodel.aainfographics.aaoptionsmodel.AASeries
 
 // recyclerview içindeki nesnelerin durumlarına buradan erişiliyor. Adapter sınıfı parametre olarak recyclerview içinde kullanılacak listeyi alıyor.
-class ItemAdapter(private var items: MutableList<PiyasaBilgisi>) : RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
+class ItemAdapter(var items: MutableList<PiyasaBilgisi>) : RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
+
+    private var backupItems = mutableListOf<PiyasaBilgisi>()
 
     // layout ilk oluşturulduğunda buraya gelecek. Görüldüğü gibi recyclerview_item.xml dosyasında belirtilen layout oluşturularak recyclerviewda gösterilmek üzere ekleniyor.
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -34,6 +37,53 @@ class ItemAdapter(private var items: MutableList<PiyasaBilgisi>) : RecyclerView.
     fun notifyListChange(list: MutableList<PiyasaBilgisi>){
         items = list
         notifyDataSetChanged()
+        updateBackup(list)
+    }
+
+    fun filterSearch(query: String){
+        Log.d("filterSearch", "query: $query")
+
+        items.removeAll { true }
+        Log.d("filterSearch", "List items  ${items.size} ${backupItems.size}")
+        backupItems.forEach{
+            items.add(it)
+        }
+        Log.d("filterSearch", "List items  ${items.size} ${backupItems.size}")
+
+        if (query.isNotEmpty())
+            items = items.filter {
+                it.fullName.contains(query, true) || it.shortName.contains(query, true)
+            } as MutableList<PiyasaBilgisi>
+        Log.d("filterSearch", "List elements ${items.size}")
+        Log.d("filterSearch", "List backup elements ${backupItems.size}")
+
+        notifyDataSetChanged()
+    }
+
+    fun backupItems(){
+        Log.d("backupItems", "backing up items.   ${items.size} ${backupItems.size}")
+        backupItems.removeAll { true }
+        Log.d("backupItems", "backing up items 2.0   ${items.size} ${backupItems.size}")
+        items.forEach { piyasaBilgisi ->
+            backupItems.add(piyasaBilgisi)
+        }
+        Log.d("backupItems", "backing up items 3.0   ${items.size} ${backupItems.size}")
+    }
+
+    fun restoreItems(){
+        Log.d("restoreItems", "Restoring items. ${items.size} ${backupItems.size}")
+        items.removeAll{true}
+        backupItems.forEach{
+            items.add(it)
+        }
+        notifyDataSetChanged()
+    }
+
+    fun updateBackup(items: MutableList<PiyasaBilgisi>){
+        backupItems.removeAll{true}
+        items.forEach{
+            backupItems.add(it)
+        }
     }
 
 

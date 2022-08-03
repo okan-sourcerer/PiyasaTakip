@@ -1,28 +1,17 @@
 package com.example.piyasatakip
 
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.os.Bundle
+import android.util.Log
 import android.view.*
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.RelativeLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
-import androidx.core.view.drawToBitmap
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.anychart.AnyChart
-import com.anychart.AnyChartView
-import com.anychart.chart.common.dataentry.DataEntry
-import com.anychart.chart.common.dataentry.ValueDataEntry
-import com.anychart.charts.Cartesian
 import com.example.piyasatakip.DataHandler.dovizList
 import com.example.piyasatakip.DataHandler.hisseList
 import com.google.android.material.tabs.TabLayout
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,6 +19,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var tabLayout: TabLayout
 
+    private lateinit var adapter: ItemAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,19 +32,48 @@ class MainActivity : AppCompatActivity() {
         handleViews()
 
         // Toolbar yazı rengi uygulamanın genel hatlarına uygun olması için mavi renk yapılıyor.
-        supportActionBar?.title = HtmlCompat.fromHtml("<font color=#2f68b6>" + getString(R.string.app_name) + "</font>", HtmlCompat.FROM_HTML_MODE_LEGACY)
+        supportActionBar?.title = HtmlCompat.fromHtml("<font color=#ffffff>" + getString(R.string.app_name) + "</font>", HtmlCompat.FROM_HTML_MODE_LEGACY)
+        supportActionBar?.setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.main_header_selector))
     }
     // Uygulamada arama tuşu ve tema değiştirme tuşu olmasını salğıyor.
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.mainmenu, menu)
+
+        val item = menu?.findItem(R.id.search_button);
+        val searchView = item?.actionView as androidx.appcompat.widget.SearchView
+
+        // search queryTextChange Listener
+        searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(p0: String?): Boolean {
+                return true
+            }
+
+            override fun onQueryTextChange(query: String?): Boolean {
+                Log.d("onQueryTextChange", "query: $query")
+                query?.let { adapter.filterSearch(it) }
+                return true
+            }
+        })
+        //Expand Collapse listener
+        item.setOnActionExpandListener(object : MenuItem.OnActionExpandListener {
+            override fun onMenuItemActionCollapse(p0: MenuItem?): Boolean {
+                Log.d("MainActivity ", "onMenuItemActionCollapse: ")
+                adapter.restoreItems()
+                return true
+            }
+
+            override fun onMenuItemActionExpand(p0: MenuItem?): Boolean {
+                Log.d("MainActivity ", "onMenuItemActionExpand: ")
+                adapter.backupItems()
+                return true
+            }
+        })
         return true
     }
 
     // seçilen menu tuşlarına göre bir işlem gerçekleştirilmesini sağlıyor.
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
-            // Arama tuşunun bir işlevi yok ancak ileride eklenecek.
-            R.id.search_button -> TODO("Search view eklenecek. Her karakter yazıldığında tekrar query yapılacak.")
 
             // Temalar arasında geçiş yapabilmek için ikona basılabilir. Aynı zamanda tema değiştirildiğinde bunu kaydediyor.
             R.id.themeSwitcher -> {
@@ -100,7 +119,7 @@ class MainActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.recycler_main)
 
         // recyclerview adaptörü oluşturularak atama işlemi yapılıyor.
-        val adapter = ItemAdapter(dovizList) // default olarak döviz sayfası açılacağından döviz listesi yükleniyor.
+        adapter = ItemAdapter(dovizList) // default olarak döviz sayfası açılacağından döviz listesi yükleniyor.
         recyclerView.adapter = adapter
         // lineer layout manager kullanılıyor.
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -121,8 +140,9 @@ class MainActivity : AppCompatActivity() {
                 if (tabLayout.selectedTabPosition == 1){
                     adapter.notifyListChange(hisseList)
                 }
-                else
+                else{
                     adapter.notifyListChange(dovizList)
+                }
             }
             override fun onTabUnselected(tab: TabLayout.Tab?) {}
             override fun onTabReselected(tab: TabLayout.Tab?) {} })

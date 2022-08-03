@@ -5,9 +5,9 @@
     <item
         android:id="@+id/search_button"
         android:icon="@drawable/ic_baseline_search_24"
-        app:showAsAction="always"
+        app:showAsAction="ifRoom|collapseActionView"
         android:title="Search"
-        />
+        app:actionViewClass="androidx.appcompat.widget.SearchView" />
 
     <item
         android:id="@+id/themeSwitcher"

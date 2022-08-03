@@ -79,7 +79,7 @@ class WidgetService : RemoteViewsService() {
             fillInIntent.putExtras(extras)
             // Make it possible to distinguish the individual on-click
             // action of a given item
-            rv.setOnClickFillInIntent(R.id.widget_item_text, fillInIntent)
+            rv.setOnClickFillInIntent(R.id.widget_item_parent, fillInIntent)
 
             // You can do heaving lifting in here, synchronously. For example, if you need to
             // process an image, fetch something from the network, etc., it is ok to do it here,
