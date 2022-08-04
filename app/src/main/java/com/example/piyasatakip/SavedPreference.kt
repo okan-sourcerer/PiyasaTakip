@@ -6,14 +6,14 @@ import androidx.preference.PreferenceManager
 
 object SavedPreference {
     // preference içinde kaydedileceği isim
-    const val CHECKTHEME = "checkTheme"
+    private const val CHECKTHEME = "checkTheme"
     // light mode
     const val LIGHT_MODE = 1
     // dark mode
     const val DARK_MODE = 2
 
     // manager ile preferenceler alınıyor.
-    fun getSharedPreferences(ctx: Context?): SharedPreferences {
+    private fun getSharedPreferences(ctx: Context?): SharedPreferences {
         return PreferenceManager.getDefaultSharedPreferences(ctx)
     }
 

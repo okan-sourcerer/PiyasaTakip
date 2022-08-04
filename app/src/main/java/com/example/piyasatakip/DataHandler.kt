@@ -17,7 +17,7 @@ object DataHandler {
     // Statik hisse verileri oluşturarak listeye ekleyecek. API üzerinden veri çekeceksek statik verilerin EKLENDİĞİ yerler silinmeli.
     private fun initializeHisse(){
         // Fiyat geçmişinin tutulduğu liste.
-        var priceList = mutableListOf<Double>()
+        val priceList = mutableListOf<Double>()
         priceList.add(50.25)
         priceList.add(48.7)
         priceList.add(51.98)
@@ -31,7 +31,7 @@ object DataHandler {
 
     // Statik verilerle döviz verileri oluşturuluyor. Yukarıdaki bilgiler bunun için de geçerli.
     private fun initializeDoviz(){
-        var dovizPriceList = mutableListOf<Double>()
+        val dovizPriceList = mutableListOf<Double>()
         dovizPriceList.add(8.0)
         dovizPriceList.add(9.0)
         dovizPriceList.add(10.0)

@@ -3,17 +3,10 @@ package com.example.piyasatakip
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.RelativeLayout
+import android.util.Log
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
-import com.github.aachartmodel.aainfographics.aachartcreator.AAChartView
 
 class WidgetService : RemoteViewsService() {
     override fun onGetViewFactory(intent: Intent): RemoteViewsFactory {
@@ -22,7 +15,7 @@ class WidgetService : RemoteViewsService() {
 
     internal inner class ListRemoteViewsFactory(private val mContext: Context, intent: Intent) :
         RemoteViewsFactory {
-        private val mWidgetItems: MutableList<PiyasaBilgisi> = ArrayList()
+        private var mWidgetItems: MutableList<PiyasaBilgisi> = ArrayList()
         private val mAppWidgetId: Int
 
         // Initialize the data set.
@@ -32,8 +25,15 @@ class WidgetService : RemoteViewsService() {
             // In onCreate() you setup any connections / cursors to your data source. Heavy lifting,
             // for example downloading or creating content etc, should be deferred to onDataSetChanged()
             // or getViewAt(). Taking more than 20 seconds in this call will result in an ANR.
-            mWidgetItems.add(DataHandler.dovizList[0])
-            mWidgetItems.add(DataHandler.hisseList[0])
+            Log.d("WidgetService", "addList: before ${DataHandler.dovizList.size} ${DataHandler.hisseList.size} ${mWidgetItems.size}")
+            DataHandler.dovizList.forEach{
+                mWidgetItems.add(it)
+            }
+            DataHandler.hisseList.forEach{
+                mWidgetItems.add(it)
+            }
+            mWidgetItems = mWidgetItems.filter { it.isFav } as MutableList<PiyasaBilgisi>
+            Log.d("WidgetService", "addList: after ${DataHandler.dovizList.size} ${DataHandler.hisseList.size} ${mWidgetItems.size}")
             // We sleep for 3 seconds here to show how the empty view appears in the interim.
             // The empty view is set in the ListWidgetProvider and should be a sibling of the
             // collection view.
@@ -53,7 +53,8 @@ class WidgetService : RemoteViewsService() {
 
         override fun getCount(): Int {
             println("WidgetId $mAppWidgetId")
-            return mCount
+            println("Widget item count ${mWidgetItems.size}")
+            return mWidgetItems.size
         }
 
         // Given the position (index) of a WidgetItem in the array, use the item's text value in
@@ -63,6 +64,7 @@ class WidgetService : RemoteViewsService() {
             // position will always range from 0 to getCount() - 1.
             // construct a remote views item based on our widget item xml file, and set the
             // text based on the position.
+            Log.d("WidgetService", "getViewAt: position = ${position}")
             val rv = RemoteViews(mContext.packageName, R.layout.widget_full_item)
             // view içindeki elemanlara erişerek viewlara yeni değerler burada atanıyor.
             rv.setTextViewText(R.id.widget_text_item_short, mWidgetItems[position].shortName)
@@ -99,6 +101,17 @@ class WidgetService : RemoteViewsService() {
         override fun getLoadingView(): RemoteViews? {
             // You can create a custom loading view (for instance when getViewAt() is slow.) If you
             // return null here, you will get the default loading view.
+            println("getLoadingView")
+            mWidgetItems.removeAll{true}
+            Log.d("WidgetService", "getLoadingView: before ${DataHandler.dovizList.size} ${DataHandler.hisseList.size} ${mWidgetItems.size}")
+            DataHandler.dovizList.forEach{
+                mWidgetItems.add(it)
+            }
+            DataHandler.hisseList.forEach{
+                mWidgetItems.add(it)
+            }
+            mWidgetItems = mWidgetItems.filter { it.isFav } as MutableList<PiyasaBilgisi>
+            Log.d("WidgetService", "getLoadingView: after ${DataHandler.dovizList.size} ${DataHandler.hisseList.size} ${mWidgetItems.size}")
             return null
         }
 
@@ -121,53 +134,23 @@ class WidgetService : RemoteViewsService() {
             // from the network, etc., it is ok to do it here, synchronously. The widget will remain
             // in its current state while work is being done here, so you don't need to worry about
             // locking up the widget.
+            mWidgetItems.removeAll{true}
+            Log.d("WidgetService", "onDataSetChanged: before ${DataHandler.dovizList.size} ${DataHandler.hisseList.size} ${mWidgetItems.size}")
+            DataHandler.dovizList.forEach{
+                mWidgetItems.add(it)
+            }
+            DataHandler.hisseList.forEach{
+                mWidgetItems.add(it)
+            }
+            mWidgetItems = mWidgetItems.filter { it.isFav } as MutableList<PiyasaBilgisi>
+            Log.d("WidgetService", "onDataSetChanged: after ${DataHandler.dovizList.size} ${DataHandler.hisseList.size} ${mWidgetItems.size}")
         }
-
-        private val mCount = 2
 
         init {
             mAppWidgetId = intent.getIntExtra(
                 AppWidgetManager.EXTRA_APPWIDGET_ID,
                 AppWidgetManager.INVALID_APPWIDGET_ID
             )
-        }
-
-        fun createBitmapOfChart(data: PiyasaBilgisi): Bitmap? {
-            val mInflater = applicationContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            //Inflate the layout into a view and configure it the way you like
-            val view = RelativeLayout(applicationContext)
-            mInflater.inflate(R.layout.widget_image, view, true)
-            val tv = view.findViewById(R.id.widget_temp_image) as AAChartView
-            tv.aa_drawChartWithChartModel(ChartHandler.setData(data))
-
-            //Provide it with a layout params. It should necessarily be wrapping the
-            //content as we not really going to have a parent for it.
-            view.layoutParams = ViewGroup.LayoutParams(
-                RelativeLayout.LayoutParams.WRAP_CONTENT,
-                RelativeLayout.LayoutParams.WRAP_CONTENT
-            )
-
-            //Pre-measure the view so that height and width don't remain null.
-            view.measure(
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
-            )
-
-            //Assign a size and position to the view and all of its descendants
-            view.layout(0, 0, view.measuredWidth, view.measuredHeight)
-
-            //Create the bitmap
-            val bitmap = Bitmap.createBitmap(
-                view.measuredWidth,
-                view.measuredHeight,
-                Bitmap.Config.ARGB_8888
-            )
-            //Create a canvas with the specified bitmap to draw into
-            val c = Canvas(bitmap)
-
-            //Render this view (and all of its children) to the given Canvas
-            view.draw(c)
-            return bitmap
         }
     }
 }

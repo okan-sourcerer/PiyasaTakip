@@ -1,22 +1,11 @@
 package com.example.piyasatakip
 
-import android.R
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.view.LayoutInflater
 import android.view.View
-import android.view.View.MeasureSpec
-import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.RelativeLayout
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.view.drawToBitmap
-import com.example.piyasatakip.DataHandler.dovizList
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartModel
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartType
-import com.github.aachartmodel.aainfographics.aachartcreator.AAChartView
 import com.github.aachartmodel.aainfographics.aachartcreator.AASeriesElement
 
 

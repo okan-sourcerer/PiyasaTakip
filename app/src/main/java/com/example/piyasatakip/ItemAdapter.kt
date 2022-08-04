@@ -1,19 +1,15 @@
 package com.example.piyasatakip
 
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.view.drawToBitmap
 import androidx.recyclerview.widget.RecyclerView
-import com.github.aachartmodel.aainfographics.aachartcreator.AAChartModel
-import com.github.aachartmodel.aainfographics.aachartcreator.AAChartType
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartView
-import com.github.aachartmodel.aainfographics.aachartcreator.AASeriesElement
-import com.github.aachartmodel.aainfographics.aaoptionsmodel.AASeries
 
 // recyclerview içindeki nesnelerin durumlarına buradan erişiliyor. Adapter sınıfı parametre olarak recyclerview içinde kullanılacak listeyi alıyor.
 class ItemAdapter(var items: MutableList<PiyasaBilgisi>) : RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
@@ -79,7 +75,7 @@ class ItemAdapter(var items: MutableList<PiyasaBilgisi>) : RecyclerView.Adapter<
         notifyDataSetChanged()
     }
 
-    fun updateBackup(items: MutableList<PiyasaBilgisi>){
+    private fun updateBackup(items: MutableList<PiyasaBilgisi>){
         backupItems.removeAll{true}
         items.forEach{
             backupItems.add(it)
@@ -122,6 +118,12 @@ class ItemAdapter(var items: MutableList<PiyasaBilgisi>) : RecyclerView.Adapter<
 
         // döviz/ hisse senedinin favoriye eklenmesi durumunda ikondaki değişiklik sağlanıyor.
         private fun handleFavIcon(isFav: Boolean){
+            val ids = AppWidgetManager.getInstance(itemView.context).getAppWidgetIds(ComponentName(itemView.context, Widget::class.java))
+
+            if(ids.isNotEmpty()){
+                AppWidgetManager.getInstance(itemView.context).notifyAppWidgetViewDataChanged(ids, R.id.list_view)
+            }
+
             if (isFav){
                 favIcon.setImageResource(R.drawable.ic_baseline_star_rate_24)
             }

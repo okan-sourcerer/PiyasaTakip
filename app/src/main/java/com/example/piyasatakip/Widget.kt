@@ -6,9 +6,7 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.widget.ListView
 import android.widget.RemoteViews
-import android.widget.TextView
 import android.widget.Toast
 
 /**
