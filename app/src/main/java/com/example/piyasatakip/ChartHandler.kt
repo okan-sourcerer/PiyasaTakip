@@ -22,7 +22,7 @@ object ChartHandler {
 
         // uygulamanın temasına göre chart arka plan rengi de değiştiriliyor.
         if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES){
-            chartModel.backgroundColor = "#787878"
+            chartModel.backgroundColor = "#424242"
         }
         else{
             chartModel.backgroundColor = "#ffffff"
@@ -32,6 +32,10 @@ object ChartHandler {
         chartModel.legendEnabled = false
         chartModel.dataLabelsEnabled = false
         chartModel.markerRadius = 1f
+
+        chartModel.yAxisTitle = ""
+        chartModel.xAxisVisible = false
+        chartModel.yAxisGridLineWidth = 0
 
         return chartModel
     }
@@ -55,7 +59,7 @@ object ChartHandler {
     fun toggleChartTheme(){
         // uygulamanın temasına göre chart arka plan rengi de değiştiriliyor.
         if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES){
-            chartModel.backgroundColor = "#787878"
+            chartModel.backgroundColor = "#424242"
         }
         else{
             chartModel.backgroundColor = "#ffffff"

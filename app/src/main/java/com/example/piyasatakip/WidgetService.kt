@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 
@@ -64,7 +65,7 @@ class WidgetService : RemoteViewsService() {
             // position will always range from 0 to getCount() - 1.
             // construct a remote views item based on our widget item xml file, and set the
             // text based on the position.
-            Log.d("WidgetService", "getViewAt: position = ${position}")
+            Log.d("WidgetService", "getViewAt: position = $position")
             val rv = RemoteViews(mContext.packageName, R.layout.widget_full_item)
             // view içindeki elemanlara erişerek viewlara yeni değerler burada atanıyor.
             rv.setTextViewText(R.id.widget_text_item_short, mWidgetItems[position].shortName)
@@ -75,6 +76,16 @@ class WidgetService : RemoteViewsService() {
 //            rv.setImageViewBitmap(R.id.widget_item_chart, createBitmapOfChart(mWidgetItems[position]))
             // Next, we set a fill-intent which will be used to fill-in the pending intent template
             // which is set on the collection view in ListWidgetProvider.
+
+            val options = AppWidgetManager.getInstance(mContext).getAppWidgetOptions(mAppWidgetId)
+            Log.d("WidgetService", "getViewAt: Width = ${options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH)}")
+            if (options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH) < 320){
+                rv.setViewVisibility(R.id.widget_item_chart, View.GONE)
+            }
+            else if (options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH) >= 320){
+                rv.setViewVisibility(R.id.widget_item_chart, View.VISIBLE)
+            }
+
             val extras = Bundle()
             extras.putInt(Widget.EXTRA_ITEM, position)
             val fillInIntent = Intent()
