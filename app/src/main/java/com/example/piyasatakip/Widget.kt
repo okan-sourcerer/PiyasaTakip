@@ -6,8 +6,6 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.os.Bundle
-import android.view.View
 import android.widget.RemoteViews
 import android.widget.Toast
 
@@ -73,9 +71,6 @@ class Widget : AppWidgetProvider() {
             )
             views.setPendingIntentTemplate(R.id.list_view, toastPendingIntent)
 
-
-            resizeWidget(appWidgetManager.getAppWidgetOptions(i), views)
-
             // Instruct the widget manager to update the widget
             appWidgetManager.updateAppWidget(appWidgetIds, views)
         }
@@ -84,48 +79,6 @@ class Widget : AppWidgetProvider() {
     companion object {
         const val TOAST_ACTION = "com.example.android.stackwidget.TOAST_ACTION"
         const val EXTRA_ITEM = "com.example.android.stackwidget.EXTRA_ITEM"
-    }
-
-    override fun onAppWidgetOptionsChanged(
-        context: Context?,
-        appWidgetManager: AppWidgetManager?,
-        appWidgetId: Int,
-        newOptions: Bundle?
-    ) {
-        val views = RemoteViews(context?.packageName, R.layout.widget)
-
-        resizeWidget(newOptions, views)
-
-        appWidgetManager?.updateAppWidget(appWidgetId, views)
-    }
-
-    private fun resizeWidget(newOptions: Bundle?, views: RemoteViews){
-        val width = newOptions?.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH)
-
-        println("resizeWidget: width = $width")
-
-        if (width != null) {
-            if(width < 320){
-                println("Width < 320")
-                views.setViewVisibility(R.id.widget_item_chart, View.GONE)
-            }
-            if (width < 160){
-                println("Width < 160")
-
-                views.setViewVisibility(R.id.widget_text_item_full, View.GONE)
-            }
-
-            if (width > 160){
-                println("Width > 160")
-
-                views.setViewVisibility(R.id.widget_text_item_full, View.VISIBLE)
-            }
-            if (width > 320){
-                println("Width > 320")
-
-                views.setViewVisibility(R.id.widget_item_chart, View.VISIBLE)
-            }
-        }
     }
 
 //    override fun onUpdate(
