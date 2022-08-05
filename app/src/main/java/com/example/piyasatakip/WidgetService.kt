@@ -38,11 +38,11 @@ class WidgetService : RemoteViewsService() {
             // We sleep for 3 seconds here to show how the empty view appears in the interim.
             // The empty view is set in the ListWidgetProvider and should be a sibling of the
             // collection view.
-            try {
-                Thread.sleep(3000)
-            } catch (e: InterruptedException) {
-                e.printStackTrace()
-            }
+//            try {
+//                Thread.sleep(3000)
+//            } catch (e: InterruptedException) {
+//                e.printStackTrace()
+//            }
         }
 
         override fun onDestroy() {
@@ -98,12 +98,12 @@ class WidgetService : RemoteViewsService() {
             // process an image, fetch something from the network, etc., it is ok to do it here,
             // synchronously. A loading view will show up in lieu of the actual contents in the
             // interim.
-            try {
-                println("Loading view $position")
-                Thread.sleep(500)
-            } catch (e: InterruptedException) {
-                e.printStackTrace()
-            }
+//            try {
+//                println("Loading view $position")
+//                Thread.sleep(500)
+//            } catch (e: InterruptedException) {
+//                e.printStackTrace()
+//            }
 
             // Return the remote views object.
             return rv

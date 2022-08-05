@@ -72,7 +72,7 @@ class Widget : AppWidgetProvider() {
         appWidgetManager!!.notifyAppWidgetViewDataChanged(appWidgetId, R.id.list_view) // en son eklenen satır. Widgetin yeniden boyutlandırıldığında grafiğin kaldırılmasını sağlıyor.
         appWidgetManager!!.updateAppWidget(appWidgetId, RemoteViews(context!!.packageName, R.layout.widget))
 
-        //TODO(Tema değiştirildiğinde liste boş gibi görünüyor. Listview ekrana bir şey döndürmüyor.)
+        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
     }
 
     fun updateMyWidgets(context: Context?) {
