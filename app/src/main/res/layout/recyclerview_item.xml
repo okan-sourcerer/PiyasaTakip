@@ -65,9 +65,9 @@
                 android:text="difference"
                 android:paddingEnd="8dp"
                 android:layout_marginTop="8dp"
-                android:textSize="12sp"
-                android:background="?colorSecondaryVariant"
+                android:textSize="13sp"
                 android:paddingStart="6dp"
+                android:textColor="?colorAccent"
                 />
 
         </LinearLayout>

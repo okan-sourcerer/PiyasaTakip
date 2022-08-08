@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
+import androidx.core.content.ContextCompat
 
 class WidgetService : RemoteViewsService() {
     override fun onGetViewFactory(intent: Intent): RemoteViewsFactory {
@@ -70,8 +71,19 @@ class WidgetService : RemoteViewsService() {
             // view içindeki elemanlara erişerek viewlara yeni değerler burada atanıyor.
             rv.setTextViewText(R.id.widget_text_item_short, mWidgetItems[position].shortName)
             rv.setTextViewText(R.id.widget_text_item_full, mWidgetItems[position].fullName)
-            rv.setTextViewText(R.id.widget_text_item_price, mWidgetItems[position].price[mWidgetItems[position].price.size - 1].toString())
-            rv.setTextViewText(R.id.widget_text_item_difference, mWidgetItems[position].difference)
+            rv.setTextViewText(R.id.widget_text_item_price, "₺${mWidgetItems[position].price[mWidgetItems[position].price.size - 1]}")
+
+            val lastClose = mWidgetItems[position].price[mWidgetItems[position].price.size - 2]
+            val current = mWidgetItems[position].current
+
+            val diff = current - lastClose
+            rv.setTextViewText(R.id.widget_text_item_difference, "${String.format("%.2f", diff)}")
+            if (diff < 0){
+                rv.setTextColor(R.id.widget_text_item_difference, ContextCompat.getColor(mContext, R.color.brigthRed))
+            }
+            else if (diff >= 0){
+                rv.setTextColor(R.id.widget_text_item_difference, ContextCompat.getColor(mContext, R.color.green))
+            }
             //rv.setImageViewBitmap(R.id.widget_item_chart, ChartHandler.getBitmapOfChart(mWidgetItems[position], mContext))
 //            rv.setImageViewBitmap(R.id.widget_item_chart, createBitmapOfChart(mWidgetItems[position]))
             // Next, we set a fill-intent which will be used to fill-in the pending intent template
@@ -84,6 +96,12 @@ class WidgetService : RemoteViewsService() {
             }
             else if (options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH) >= 320){
                 rv.setViewVisibility(R.id.widget_item_chart, View.VISIBLE)
+            }
+            if (options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH) < 220){
+                rv.setViewVisibility(R.id.widget_text_item_full, View.GONE)
+            }
+            else if (options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH) >= 220){
+                rv.setViewVisibility(R.id.widget_text_item_full, View.VISIBLE)
             }
 
             val extras = Bundle()

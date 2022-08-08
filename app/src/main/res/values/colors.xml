@@ -8,4 +8,6 @@
     <color name="greenDark">#21B523</color>
     <color name="yellow">#FFE138</color>
     <color name="blue">#2f68b6</color>
+    <color name="red">#DD0404</color>
+    <color name="brigthRed">#FF0000</color>
 </resources>

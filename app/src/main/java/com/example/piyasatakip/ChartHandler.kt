@@ -36,6 +36,7 @@ object ChartHandler {
         chartModel.yAxisTitle = ""
         chartModel.xAxisVisible = false
         chartModel.yAxisGridLineWidth = 0
+        chartModel.colorsTheme = arrayOf("#787878")
 
         return chartModel
     }

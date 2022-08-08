@@ -2,12 +2,14 @@ package com.example.piyasatakip
 
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
+import android.content.res.Resources
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartView
 
@@ -98,8 +100,12 @@ class ItemAdapter(var items: MutableList<PiyasaBilgisi>) : RecyclerView.Adapter<
             // döviz/hisse senedi isimleriyle ilgili değişkenler atanıyor
             shortName.text = info.shortName
             fullName.text = info.fullName
-            price.text = info.price[info.price.size - 1].toString()
-            increase.text = info.difference
+            price.text = "₺${info.current}"
+            val lastClose = info.price[info.price.size - 2]
+            val current = info.current
+
+            val diff = current - lastClose
+            increase.text = "${String.format("%.2f", diff)}"
 
             handleFavIcon(info.isFav)
 
@@ -111,6 +117,19 @@ class ItemAdapter(var items: MutableList<PiyasaBilgisi>) : RecyclerView.Adapter<
 
             // oluşturulan model chartviewa ekleniyor
             val chartModel = ChartHandler.setData(info)
+            if (diff < 0){
+                increase.setTextColor(ContextCompat.getColor(itemView.context, R.color.brigthRed))
+            }
+            else if (diff > 0){
+                increase.setTextColor(ContextCompat.getColor(itemView.context, R.color.green))
+            }
+
+            val overallDiff = info.price[info.price.size - 1] - info.price[0]
+            if (overallDiff < 0){
+                chartModel.colorsTheme = arrayOf("#ff0000")
+            } else if (overallDiff > 0){
+                chartModel.colorsTheme = arrayOf("#33EA36")
+            }
             //chart.setImageBitmap(ChartHandler.getBitmapOfChart(info, itemView.context))
             chart.aa_drawChartWithChartModel(chartModel)
         }

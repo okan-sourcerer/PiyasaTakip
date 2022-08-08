@@ -13,10 +13,6 @@ import android.widget.RemoteViews
 import android.widget.Toast
 
 
-/**
- * Implementation of App Widget functionality.
- */
-
 class Widget : AppWidgetProvider() {
     // Called when the BroadcastReceiver receives an Intent broadcast.
     // Checks to see whether the intent's action is TOAST_ACTION. If it is, the app widget
@@ -24,7 +20,6 @@ class Widget : AppWidgetProvider() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == TOAST_ACTION) {
             var viewIndex = intent.getIntExtra(EXTRA_ITEM, 0)
-            Toast.makeText(context, "Item" + ++viewIndex + " selected", Toast.LENGTH_SHORT).show()
         }
         super.onReceive(context, intent)
     }
@@ -36,6 +31,7 @@ class Widget : AppWidgetProvider() {
     ) {
 
 
+        super.onUpdate(context, appWidgetManager, appWidgetIds)
         // There may be multiple widgets active, so update all of them
         // update each of the widgets with the remote adapter
         for (i in appWidgetIds.indices) {
@@ -58,6 +54,8 @@ class Widget : AppWidgetProvider() {
         const val TOAST_ACTION = "com.example.android.stackwidget.TOAST_ACTION"
         const val EXTRA_ITEM = "com.example.android.stackwidget.EXTRA_ITEM"
         const val WIDGET_IDS = "Widget.WIDGET_IDS"
+        const val DOVIZ_ACTION = "Widget.Doviz"
+        const val HISSE_ACTION = "Widget.Hisse"
     }
 
     override fun onAppWidgetOptionsChanged(
@@ -66,12 +64,13 @@ class Widget : AppWidgetProvider() {
         appWidgetId: Int,
         newOptions: Bundle?
     ) {
-        Log.d("Widget", "onAppWidgetOptionsChanged: ")
+        Log.d("Widget", "onAppWidgetOptionsChanged: context null ?=${context == null}")
 
 //        updateMyWidgets(context)
         appWidgetManager!!.notifyAppWidgetViewDataChanged(appWidgetId, R.id.list_view) // en son eklenen satır. Widgetin yeniden boyutlandırıldığında grafiğin kaldırılmasını sağlıyor.
-        appWidgetManager!!.updateAppWidget(appWidgetId, RemoteViews(context!!.packageName, R.layout.widget))
+        appWidgetManager.updateAppWidget(appWidgetId, RemoteViews(context!!.packageName, R.layout.widget))
 
+        onUpdate(context,appWidgetManager, appWidgetManager.getAppWidgetIds(ComponentName(context, Widget::class.java)))
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
     }
 
