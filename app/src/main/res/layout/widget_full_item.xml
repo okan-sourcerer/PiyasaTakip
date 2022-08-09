@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/widget_item_parent"
     android:layout_width="match_parent"
-    android:layout_height="90dp"
+    android:layout_height="wrap_content"
     android:background="@drawable/app_widget_inner_view_background"
     android:theme="@android:style/Theme.DeviceDefault.DayNight">
 
@@ -69,13 +69,13 @@
             android:paddingStart="6dp"
             android:paddingEnd="8dp"
             android:text="difference"
-            android:textSize="13sp"/>
+            android:textSize="13sp" />
     </LinearLayout>
 
     <ImageView
         android:id="@+id/widget_item_chart"
         android:layout_width="180dp"
-        android:layout_height="match_parent"
+        android:layout_height="70dp"
         android:layout_centerVertical="true"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
@@ -83,5 +83,15 @@
         android:layout_toEndOf="@id/widget_item_linear_textinfo"
         android:background="@color/blue" />
 
+    <TextView
+        android:id="@+id/widget_separator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:textSize="24sp"
+        android:visibility="invisible"
+        android:textStyle="bold"
+        android:padding="6dp"
+        />
 
 </RelativeLayout>

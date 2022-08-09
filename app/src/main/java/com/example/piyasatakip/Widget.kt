@@ -74,52 +74,6 @@ class Widget : AppWidgetProvider() {
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
     }
 
-    fun updateMyWidgets(context: Context?) {
-        val man = AppWidgetManager.getInstance(context)
-        val ids = man.getAppWidgetIds(
-            context?.let { ComponentName(it, Widget::class.java) }
-        )
-        Log.d("Widget", "updateMyWidgets: ")
-        val updateIntent = Intent()
-        updateIntent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
-        updateIntent.putExtra(WIDGET_IDS, ids)
-        context?.sendBroadcast(updateIntent)
-    }
-    fun updateAllWidgets(
-        context: Context,
-        layoutResourceId: Int,
-        appWidgetClass: Class<out AppWidgetProvider?>?
-    ) {
-        Log.d("Widget", "updateAllWidgets: ")
-        val remoteViews = RemoteViews(context.packageName, layoutResourceId)
-        val manager = AppWidgetManager.getInstance(context)
-        val appWidgetIds = manager.getAppWidgetIds(
-            ComponentName(
-                context,
-                appWidgetClass!!
-            )
-        )
-        for (i in appWidgetIds.indices) {
-            manager.updateAppWidget(appWidgetIds[i], remoteViews)
-        }
-    }
-
-    private fun resizeWidget(context: Context?, newOptions: Bundle?, views: RemoteViews, appWidgetId: Int){
-        val width = newOptions?.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH)
-
-        println("resizeWidget: width = $width")
-
-        if (width != null) {
-            val intent = Intent(context, WidgetService::class.java)
-            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
-
-            // When intents are compared, the extras are ignored, so we need to embed the extras
-            // into the data so that the extras will not be ignored.
-            intent.data = Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME))
-            constructRemoteViews(context, intent, appWidgetId)
-        }
-    }
-
     private fun constructRemoteViews(context: Context?, intent: Intent, widgetId: Int): RemoteViews{
 
         // Construct the RemoteViews object
@@ -128,7 +82,7 @@ class Widget : AppWidgetProvider() {
 
         // The empty view is displayed when the collection has no items. It should be a sibling
         // of the collection view.
-        views.setEmptyView(R.id.list_view, R.id.empty_view)
+//        views.setEmptyView(R.id.list_view, R.id.empty_view)
 
         // This section makes it possible for items to have individualized behavior.
         // It does this by setting up a pending intent template. Individuals items of a collection

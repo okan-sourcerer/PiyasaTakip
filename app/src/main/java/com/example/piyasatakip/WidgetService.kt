@@ -5,7 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.View
+import android.widget.RelativeLayout
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import androidx.core.content.ContextCompat
@@ -28,13 +30,8 @@ class WidgetService : RemoteViewsService() {
             // for example downloading or creating content etc, should be deferred to onDataSetChanged()
             // or getViewAt(). Taking more than 20 seconds in this call will result in an ANR.
             Log.d("WidgetService", "addList: before ${DataHandler.dovizList.size} ${DataHandler.hisseList.size} ${mWidgetItems.size}")
-            DataHandler.dovizList.forEach{
-                mWidgetItems.add(it)
-            }
-            DataHandler.hisseList.forEach{
-                mWidgetItems.add(it)
-            }
-            mWidgetItems = mWidgetItems.filter { it.isFav } as MutableList<PiyasaBilgisi>
+
+            addAllItems()
             Log.d("WidgetService", "addList: after ${DataHandler.dovizList.size} ${DataHandler.hisseList.size} ${mWidgetItems.size}")
             // We sleep for 3 seconds here to show how the empty view appears in the interim.
             // The empty view is set in the ListWidgetProvider and should be a sibling of the
@@ -63,11 +60,27 @@ class WidgetService : RemoteViewsService() {
         // combination with the app widget item XML file to construct a RemoteViews object.
         override fun getViewAt(position: Int): RemoteViews {
             println("getViewAt() is called for $mAppWidgetId")
+
+
             // position will always range from 0 to getCount() - 1.
             // construct a remote views item based on our widget item xml file, and set the
             // text based on the position.
             Log.d("WidgetService", "getViewAt: position = $position")
             val rv = RemoteViews(mContext.packageName, R.layout.widget_full_item)
+            if (mWidgetItems[position].shortName == "Döviz" || mWidgetItems[position].shortName == "Hisse"){
+                rv.setTextViewText(R.id.widget_separator, mWidgetItems[position].shortName)
+                rv.setViewVisibility(R.id.widget_item_linear_textinfo, View.GONE)
+                rv.setViewVisibility(R.id.widget_linear_price_info, View.GONE)
+                rv.setViewVisibility(R.id.widget_item_chart, View.GONE)
+                rv.setViewVisibility(R.id.widget_separator, View.VISIBLE)
+                return rv
+            } else {
+                rv.setViewVisibility(R.id.widget_item_linear_textinfo, View.VISIBLE)
+                rv.setViewVisibility(R.id.widget_linear_price_info, View.VISIBLE)
+                rv.setViewVisibility(R.id.widget_item_chart, View.VISIBLE)
+                rv.setViewVisibility(R.id.widget_separator, View.INVISIBLE)
+
+            }
             // view içindeki elemanlara erişerek viewlara yeni değerler burada atanıyor.
             rv.setTextViewText(R.id.widget_text_item_short, mWidgetItems[position].shortName)
             rv.setTextViewText(R.id.widget_text_item_full, mWidgetItems[position].fullName)
@@ -77,7 +90,7 @@ class WidgetService : RemoteViewsService() {
             val current = mWidgetItems[position].current
 
             val diff = current - lastClose
-            rv.setTextViewText(R.id.widget_text_item_difference, "${String.format("%.2f", diff)}")
+            rv.setTextViewText(R.id.widget_text_item_difference, String.format("%.2f", diff))
             if (diff < 0){
                 rv.setTextColor(R.id.widget_text_item_difference, ContextCompat.getColor(mContext, R.color.brigthRed))
             }
@@ -131,15 +144,9 @@ class WidgetService : RemoteViewsService() {
             // You can create a custom loading view (for instance when getViewAt() is slow.) If you
             // return null here, you will get the default loading view.
             println("getLoadingView")
-            mWidgetItems.removeAll{true}
             Log.d("WidgetService", "getLoadingView: before ${DataHandler.dovizList.size} ${DataHandler.hisseList.size} ${mWidgetItems.size}")
-            DataHandler.dovizList.forEach{
-                mWidgetItems.add(it)
-            }
-            DataHandler.hisseList.forEach{
-                mWidgetItems.add(it)
-            }
-            mWidgetItems = mWidgetItems.filter { it.isFav } as MutableList<PiyasaBilgisi>
+
+            addAllItems()
             Log.d("WidgetService", "getLoadingView: after ${DataHandler.dovizList.size} ${DataHandler.hisseList.size} ${mWidgetItems.size}")
             return null
         }
@@ -163,15 +170,9 @@ class WidgetService : RemoteViewsService() {
             // from the network, etc., it is ok to do it here, synchronously. The widget will remain
             // in its current state while work is being done here, so you don't need to worry about
             // locking up the widget.
-            mWidgetItems.removeAll{true}
             Log.d("WidgetService", "onDataSetChanged: before ${DataHandler.dovizList.size} ${DataHandler.hisseList.size} ${mWidgetItems.size}")
-            DataHandler.dovizList.forEach{
-                mWidgetItems.add(it)
-            }
-            DataHandler.hisseList.forEach{
-                mWidgetItems.add(it)
-            }
-            mWidgetItems = mWidgetItems.filter { it.isFav } as MutableList<PiyasaBilgisi>
+
+            addAllItems()
             Log.d("WidgetService", "onDataSetChanged: after ${DataHandler.dovizList.size} ${DataHandler.hisseList.size} ${mWidgetItems.size}")
         }
 
@@ -180,6 +181,31 @@ class WidgetService : RemoteViewsService() {
                 AppWidgetManager.EXTRA_APPWIDGET_ID,
                 AppWidgetManager.INVALID_APPWIDGET_ID
             )
+        }
+
+        private fun addAllItems(){
+            mWidgetItems.removeAll{true}
+            mWidgetItems.add(PiyasaBilgisi("Döviz", "", mutableListOf(), "", true, "", 0.0))
+            DataHandler.dovizList.forEach{
+                mWidgetItems.add(it)
+            }
+            if (DataHandler.dovizList.none { it.isFav })
+                mWidgetItems.removeAt(0)
+
+            mWidgetItems.add(PiyasaBilgisi("Hisse", "", mutableListOf(), "", true, "", 0.0))
+            DataHandler.hisseList.forEach{
+                mWidgetItems.add(it)
+            }
+            if (DataHandler.hisseList.none { it.isFav })
+                mWidgetItems.removeAt(mWidgetItems.size - DataHandler.hisseList.size - 1)
+            mWidgetItems = mWidgetItems.filter { it.isFav } as MutableList<PiyasaBilgisi>
+
+            if (mWidgetItems.size == 0){
+                Log.d("WidgetService", "addAllItems: inside widget.size == 0")
+                DataHandler.dovizList.forEach{
+                    mWidgetItems.add(it)
+                }
+            }
         }
     }
 }

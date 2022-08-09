@@ -66,6 +66,8 @@ object DataHandler {
         priceList.add(472.50)
         priceList.add(472.80)
         hisseList.add(PiyasaBilgisi("OTKAR", "Otokar Otomotiv ve Savunma Sanayi AS", priceList, "", false, "Hisse", 472.80))
+
+        hisseList.sortBy { it.shortName }
     }
 
     // Statik verilerle döviz verileri oluşturuluyor. Yukarıdaki bilgiler bunun için de geçerli.
@@ -78,15 +80,6 @@ object DataHandler {
         dovizPriceList.add(17.91)
         dovizPriceList.add(17.96)
         dovizList.add(PiyasaBilgisi("USD", "Dolar", dovizPriceList, "+1", true, "Döviz", 17.96))
-        dovizPriceList = mutableListOf<Double>()
-        dovizPriceList.add(18.84)
-        dovizPriceList.add(18.74)
-        dovizPriceList.add(18.68)
-        dovizPriceList.add(18.75)
-        dovizPriceList.add(18.63)
-        dovizPriceList.add(18.63)
-        dovizPriceList.add(18.77)
-        dovizList.add(PiyasaBilgisi("CHF", "İsviçre Frangı", dovizPriceList, "+1", false, "Döviz", 18.77))
 
         dovizPriceList = mutableListOf<Double>()
         dovizPriceList.add(18.36)
@@ -109,6 +102,15 @@ object DataHandler {
         dovizPriceList.add(21.75)
         dovizList.add(PiyasaBilgisi("GBP", "Sterlin", dovizPriceList, "", false, "Döviz", 21.75))
 
+        dovizPriceList = mutableListOf<Double>()
+        dovizPriceList.add(18.84)
+        dovizPriceList.add(18.74)
+        dovizPriceList.add(18.68)
+        dovizPriceList.add(18.75)
+        dovizPriceList.add(18.63)
+        dovizPriceList.add(18.63)
+        dovizPriceList.add(18.77)
+        dovizList.add(PiyasaBilgisi("CHF", "İsviçre Frangı", dovizPriceList, "+1", false, "Döviz", 18.77))
 
 
     }

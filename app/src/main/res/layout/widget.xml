@@ -10,21 +10,20 @@
         android:id="@+id/list_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:loopViews="true"
         android:layout_below="@id/logo"
-        />
-
-    <TextView
-        android:id="@+id/empty_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/widget_item_background_empty"
         android:gravity="center"
-        android:text="YAPI KREDİ"
-        android:textColor="@color/white"
-        android:textSize="40sp"
-        android:textStyle="bold" />
+        android:loopViews="true" />
+
+<!--    <TextView-->
+<!--        android:id="@+id/empty_view"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:background="@drawable/widget_item_background_empty"-->
+<!--        android:gravity="center"-->
+<!--        android:text="YAPI KREDİ"-->
+<!--        android:textColor="@color/white"-->
+<!--        android:textSize="40sp"-->
+<!--        android:textStyle="bold" />-->
 
 
     <ImageView
@@ -33,29 +32,6 @@
         android:layout_height="35dp"
         android:src="@drawable/ykstaj16"
         android:scaleType="fitXY"
-        />
-
-    <ImageButton
-        android:id="@+id/doviz_button"
-        android:layout_width="45dp"
-        android:layout_height="35dp"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="10dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:backgroundTint="#CA0556A7"
-        android:src="@drawable/ic_baseline_attach_money_24"
-
-        />
-
-    <ImageButton
-        android:id="@+id/hisse_button"
-        android:layout_width="45dp"
-        android:layout_height="35dp"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="56dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:backgroundTint="#CA0556A7"
-        android:src="@drawable/ic_baseline_show_chart_24"
-        />
+        android:backgroundTint="#0556A7"/>
 
 </RelativeLayout>
