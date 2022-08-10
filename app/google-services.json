@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "798686360728",
+    "project_id": "piyasa-takip-69836",
+    "storage_bucket": "piyasa-takip-69836.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:798686360728:android:b206e53336274991538ced",
+        "android_client_info": {
+          "package_name": "com.example.piyasatakip"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "798686360728-vpufd696iehotjjoue027u7pon37u3sn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqwXSQYGD92BdNCxTtbJo1H9UfG0N-9xk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "798686360728-vpufd696iehotjjoue027u7pon37u3sn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
