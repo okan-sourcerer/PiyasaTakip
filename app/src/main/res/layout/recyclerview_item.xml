@@ -65,9 +65,9 @@
                 android:text="difference"
                 android:paddingEnd="8dp"
                 android:layout_marginTop="8dp"
-                android:textSize="12sp"
-                android:background="?colorSecondaryVariant"
+                android:textSize="13sp"
                 android:paddingStart="6dp"
+                android:textColor="?colorAccent"
                 />
 
         </LinearLayout>
@@ -87,8 +87,7 @@
         <com.github.aachartmodel.aainfographics.aachartcreator.AAChartView
             android:id="@+id/item_chart"
             android:layout_width="180dp"
-            android:layout_height="match_parent"
-            android:layout_margin="10dp"
+            android:layout_height="0dp"
             app:layout_constraintRight_toLeftOf="@id/linear_price_info"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"

@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartView
 
@@ -98,8 +99,19 @@ class ItemAdapter(var items: MutableList<PiyasaBilgisi>) : RecyclerView.Adapter<
             // döviz/hisse senedi isimleriyle ilgili değişkenler atanıyor
             shortName.text = info.shortName
             fullName.text = info.fullName
-            price.text = info.price[info.price.size - 1].toString()
-            increase.text = info.difference
+            price.text = "₺${info.current}"
+            if (info.priceHistory.size > 2){
+                val lastClose = info.priceHistory[info.priceHistory.size - 2]
+                val current = info.current
+                val diff = current - lastClose
+                increase.text = String.format("%.2f", diff)
+                if (diff < 0){
+                    increase.setTextColor(ContextCompat.getColor(itemView.context, R.color.brigthRed))
+                }
+                else if (diff > 0){
+                    increase.setTextColor(ContextCompat.getColor(itemView.context, R.color.green))
+                }
+            }
 
             handleFavIcon(info.isFav)
 
@@ -107,10 +119,21 @@ class ItemAdapter(var items: MutableList<PiyasaBilgisi>) : RecyclerView.Adapter<
             favIcon.setOnClickListener {
                 info.isFav = !info.isFav
                 handleFavIcon(info.isFav)
+                SavedPreference.saveFav(itemView.context, info.shortName, info.isFav)
             }
 
             // oluşturulan model chartviewa ekleniyor
             val chartModel = ChartHandler.setData(info)
+
+            if (info.priceHistory.size > 1){
+                val overallDiff = info.priceHistory[info.priceHistory.size - 1] - info.priceHistory[0]
+                if (overallDiff < 0){
+                    chartModel.colorsTheme = arrayOf("#ff0000")
+                } else if (overallDiff > 0){
+                    chartModel.colorsTheme = arrayOf("#33EA36")
+                }
+            }
+
             //chart.setImageBitmap(ChartHandler.getBitmapOfChart(info, itemView.context))
             chart.aa_drawChartWithChartModel(chartModel)
         }

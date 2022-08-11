@@ -22,7 +22,7 @@ object ChartHandler {
 
         // uygulamanın temasına göre chart arka plan rengi de değiştiriliyor.
         if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES){
-            chartModel.backgroundColor = "#787878"
+            chartModel.backgroundColor = "#424242"
         }
         else{
             chartModel.backgroundColor = "#ffffff"
@@ -33,11 +33,16 @@ object ChartHandler {
         chartModel.dataLabelsEnabled = false
         chartModel.markerRadius = 1f
 
+        chartModel.yAxisTitle = ""
+        chartModel.xAxisVisible = false
+        chartModel.yAxisGridLineWidth = 0
+        chartModel.colorsTheme = arrayOf("#787878")
+
         return chartModel
     }
 
     fun setData(data: PiyasaBilgisi): AAChartModel{
-        return chartModel.series(arrayOf(AASeriesElement().data(data.price.toTypedArray())))
+        return chartModel.series(arrayOf(AASeriesElement().data(data.priceHistory.toTypedArray())))
     }
 
     fun loadBitmapFromView(v: View): Bitmap? {
@@ -55,7 +60,7 @@ object ChartHandler {
     fun toggleChartTheme(){
         // uygulamanın temasına göre chart arka plan rengi de değiştiriliyor.
         if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES){
-            chartModel.backgroundColor = "#787878"
+            chartModel.backgroundColor = "#424242"
         }
         else{
             chartModel.backgroundColor = "#ffffff"
