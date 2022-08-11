@@ -42,7 +42,7 @@ object ChartHandler {
     }
 
     fun setData(data: PiyasaBilgisi): AAChartModel{
-        return chartModel.series(arrayOf(AASeriesElement().data(data.price.toTypedArray())))
+        return chartModel.series(arrayOf(AASeriesElement().data(data.priceHistory.toTypedArray())))
     }
 
     fun loadBitmapFromView(v: View): Bitmap? {

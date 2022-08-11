@@ -1,6 +1,10 @@
 {
   "project_info": {
     "project_number": "798686360728",
+<<<<<<< Updated upstream
+=======
+    "firebase_url": "https://piyasa-takip-69836.firebaseio.com",
+>>>>>>> Stashed changes
     "project_id": "piyasa-takip-69836",
     "storage_bucket": "piyasa-takip-69836.appspot.com"
   },

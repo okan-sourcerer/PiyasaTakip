@@ -80,8 +80,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:layout_toStartOf="@+id/widget_linear_price_info"
-        android:layout_toEndOf="@id/widget_item_linear_textinfo"
-        android:background="@color/blue" />
+        android:layout_toEndOf="@id/widget_item_linear_textinfo" />
 
     <TextView
         android:id="@+id/widget_separator"

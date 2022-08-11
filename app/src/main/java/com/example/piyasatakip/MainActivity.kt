@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.text.HtmlCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.piyasatakip.DataHandler.dovizList
 import com.example.piyasatakip.DataHandler.hisseList
 import com.google.android.material.tabs.TabLayout
@@ -25,11 +26,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        Glide.with(applicationContext)
+        Log.d("MainActivity", "onCreate: before inits")
         // cihazda kayıtlı olan temanın yüklenmesi sağlanıyor.
         loadThemePreference()
+        Log.d("MainActivity", "onCreate: after loadTheme")
 
         // recyclerview ve tab layout için gerekli işlemleri gerçekleştiriyor.
         handleViews()
+        DataHandler.loadData(adapter, this)
+        Log.d("MainActivity", "onCreate: after handleViews")
 
         // Toolbar yazı rengi uygulamanın genel hatlarına uygun olması için mavi renk yapılıyor.
         supportActionBar?.title = HtmlCompat.fromHtml("<font color=#ffffff>" + getString(R.string.app_name) + "</font>", HtmlCompat.FROM_HTML_MODE_LEGACY)

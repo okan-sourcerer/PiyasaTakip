@@ -3,14 +3,25 @@ package com.example.piyasatakip
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.util.TypedValue
 import android.view.View
-import android.widget.RelativeLayout
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import androidx.core.content.ContextCompat
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.FutureTarget
+import com.bumptech.glide.request.target.AppWidgetTarget
+import com.google.firebase.storage.FirebaseStorage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.util.*
+import java.util.concurrent.ExecutionException
+
 
 class WidgetService : RemoteViewsService() {
     override fun onGetViewFactory(intent: Intent): RemoteViewsFactory {
@@ -60,6 +71,7 @@ class WidgetService : RemoteViewsService() {
         // combination with the app widget item XML file to construct a RemoteViews object.
         override fun getViewAt(position: Int): RemoteViews {
             println("getViewAt() is called for $mAppWidgetId")
+            val info = mWidgetItems[position]
 
 
             // position will always range from 0 to getCount() - 1.
@@ -67,8 +79,8 @@ class WidgetService : RemoteViewsService() {
             // text based on the position.
             Log.d("WidgetService", "getViewAt: position = $position")
             val rv = RemoteViews(mContext.packageName, R.layout.widget_full_item)
-            if (mWidgetItems[position].shortName == "Döviz" || mWidgetItems[position].shortName == "Hisse"){
-                rv.setTextViewText(R.id.widget_separator, mWidgetItems[position].shortName)
+            if (info.shortName == "Döviz" || info.shortName == "Hisse"){
+                rv.setTextViewText(R.id.widget_separator, info.shortName)
                 rv.setViewVisibility(R.id.widget_item_linear_textinfo, View.GONE)
                 rv.setViewVisibility(R.id.widget_linear_price_info, View.GONE)
                 rv.setViewVisibility(R.id.widget_item_chart, View.GONE)
@@ -82,12 +94,21 @@ class WidgetService : RemoteViewsService() {
 
             }
             // view içindeki elemanlara erişerek viewlara yeni değerler burada atanıyor.
-            rv.setTextViewText(R.id.widget_text_item_short, mWidgetItems[position].shortName)
-            rv.setTextViewText(R.id.widget_text_item_full, mWidgetItems[position].fullName)
-            rv.setTextViewText(R.id.widget_text_item_price, "₺${mWidgetItems[position].price[mWidgetItems[position].price.size - 1]}")
+            rv.setTextViewText(R.id.widget_text_item_short, info.shortName)
+            rv.setTextViewText(R.id.widget_text_item_full, info.fullName)
+            rv.setTextViewText(R.id.widget_text_item_price, "₺${info.priceHistory[info.priceHistory.size - 1]}")
 
-            val lastClose = mWidgetItems[position].price[mWidgetItems[position].price.size - 2]
-            val current = mWidgetItems[position].current
+            if (info.imagePath != ""){
+                SavedPreference.getImagePath(mContext, info.shortName)
+                    ?.let {
+                        val bm = DataHandler.loadImageFromStorage(it, info.shortName)
+                        if (bm != null)
+                            rv.setImageViewBitmap(R.id.widget_item_chart, bm)
+                    }
+            }
+
+            val lastClose = info.priceHistory[info.priceHistory.size - 2]
+            val current = info.current
 
             val diff = current - lastClose
             rv.setTextViewText(R.id.widget_text_item_difference, String.format("%.2f", diff))
@@ -129,14 +150,7 @@ class WidgetService : RemoteViewsService() {
             // process an image, fetch something from the network, etc., it is ok to do it here,
             // synchronously. A loading view will show up in lieu of the actual contents in the
             // interim.
-//            try {
-//                println("Loading view $position")
-//                Thread.sleep(500)
-//            } catch (e: InterruptedException) {
-//                e.printStackTrace()
-//            }
 
-            // Return the remote views object.
             return rv
         }
 
@@ -185,14 +199,14 @@ class WidgetService : RemoteViewsService() {
 
         private fun addAllItems(){
             mWidgetItems.removeAll{true}
-            mWidgetItems.add(PiyasaBilgisi("Döviz", "", mutableListOf(), "", true, "", 0.0))
+            mWidgetItems.add(PiyasaBilgisi("Döviz", "", mutableListOf(), "", 0.0, "", true))
             DataHandler.dovizList.forEach{
                 mWidgetItems.add(it)
             }
             if (DataHandler.dovizList.none { it.isFav })
                 mWidgetItems.removeAt(0)
 
-            mWidgetItems.add(PiyasaBilgisi("Hisse", "", mutableListOf(), "", true, "", 0.0))
+            mWidgetItems.add(PiyasaBilgisi("Hisse", "", mutableListOf(), "", 0.0, "", true))
             DataHandler.hisseList.forEach{
                 mWidgetItems.add(it)
             }

@@ -2,7 +2,6 @@ package com.example.piyasatakip
 
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
-import android.content.res.Resources
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -101,11 +100,18 @@ class ItemAdapter(var items: MutableList<PiyasaBilgisi>) : RecyclerView.Adapter<
             shortName.text = info.shortName
             fullName.text = info.fullName
             price.text = "₺${info.current}"
-            val lastClose = info.price[info.price.size - 2]
-            val current = info.current
-
-            val diff = current - lastClose
-            increase.text = "${String.format("%.2f", diff)}"
+            if (info.priceHistory.size > 2){
+                val lastClose = info.priceHistory[info.priceHistory.size - 2]
+                val current = info.current
+                val diff = current - lastClose
+                increase.text = String.format("%.2f", diff)
+                if (diff < 0){
+                    increase.setTextColor(ContextCompat.getColor(itemView.context, R.color.brigthRed))
+                }
+                else if (diff > 0){
+                    increase.setTextColor(ContextCompat.getColor(itemView.context, R.color.green))
+                }
+            }
 
             handleFavIcon(info.isFav)
 
@@ -113,23 +119,21 @@ class ItemAdapter(var items: MutableList<PiyasaBilgisi>) : RecyclerView.Adapter<
             favIcon.setOnClickListener {
                 info.isFav = !info.isFav
                 handleFavIcon(info.isFav)
+                SavedPreference.saveFav(itemView.context, info.shortName, info.isFav)
             }
 
             // oluşturulan model chartviewa ekleniyor
             val chartModel = ChartHandler.setData(info)
-            if (diff < 0){
-                increase.setTextColor(ContextCompat.getColor(itemView.context, R.color.brigthRed))
-            }
-            else if (diff > 0){
-                increase.setTextColor(ContextCompat.getColor(itemView.context, R.color.green))
+
+            if (info.priceHistory.size > 1){
+                val overallDiff = info.priceHistory[info.priceHistory.size - 1] - info.priceHistory[0]
+                if (overallDiff < 0){
+                    chartModel.colorsTheme = arrayOf("#ff0000")
+                } else if (overallDiff > 0){
+                    chartModel.colorsTheme = arrayOf("#33EA36")
+                }
             }
 
-            val overallDiff = info.price[info.price.size - 1] - info.price[0]
-            if (overallDiff < 0){
-                chartModel.colorsTheme = arrayOf("#ff0000")
-            } else if (overallDiff > 0){
-                chartModel.colorsTheme = arrayOf("#33EA36")
-            }
             //chart.setImageBitmap(ChartHandler.getBitmapOfChart(info, itemView.context))
             chart.aa_drawChartWithChartModel(chartModel)
         }

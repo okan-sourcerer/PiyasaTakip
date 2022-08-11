@@ -10,7 +10,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.RemoteViews
-import android.widget.Toast
 
 
 class Widget : AppWidgetProvider() {
