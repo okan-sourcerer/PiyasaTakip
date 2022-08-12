@@ -3,24 +3,14 @@ package com.example.piyasatakip
 import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import androidx.core.content.ContextCompat
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.FutureTarget
-import com.bumptech.glide.request.target.AppWidgetTarget
 import com.google.firebase.storage.FirebaseStorage
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.util.*
-import java.util.concurrent.ExecutionException
 
 
 class WidgetService : RemoteViewsService() {
@@ -91,21 +81,22 @@ class WidgetService : RemoteViewsService() {
                 rv.setViewVisibility(R.id.widget_linear_price_info, View.VISIBLE)
                 rv.setViewVisibility(R.id.widget_item_chart, View.VISIBLE)
                 rv.setViewVisibility(R.id.widget_separator, View.INVISIBLE)
-
             }
             // view içindeki elemanlara erişerek viewlara yeni değerler burada atanıyor.
             rv.setTextViewText(R.id.widget_text_item_short, info.shortName)
             rv.setTextViewText(R.id.widget_text_item_full, info.fullName)
-            rv.setTextViewText(R.id.widget_text_item_price, "₺${info.priceHistory[info.priceHistory.size - 1]}")
+            rv.setTextViewText(R.id.widget_text_item_price, "₺${info.current}")
 
             if (info.imagePath != ""){
                 SavedPreference.getImagePath(mContext, info.shortName)
                     ?.let {
                         val bm = DataHandler.loadImageFromStorage(it, info.shortName)
+                        Log.d("DataHandler", "getViewAt: loadImageFromStorage. List size ${mWidgetItems.size}, ${info.isFav}")
                         if (bm != null)
                             rv.setImageViewBitmap(R.id.widget_item_chart, bm)
                     }
             }
+
 
             val lastClose = info.priceHistory[info.priceHistory.size - 2]
             val current = info.current
@@ -125,10 +116,10 @@ class WidgetService : RemoteViewsService() {
 
             val options = AppWidgetManager.getInstance(mContext).getAppWidgetOptions(mAppWidgetId)
             Log.d("WidgetService", "getViewAt: Width = ${options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH)}")
-            if (options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH) < 320){
+            if (options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH) < 220){
                 rv.setViewVisibility(R.id.widget_item_chart, View.GONE)
             }
-            else if (options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH) >= 320){
+            else if (options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH) >= 220){
                 rv.setViewVisibility(R.id.widget_item_chart, View.VISIBLE)
             }
             if (options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH) < 220){

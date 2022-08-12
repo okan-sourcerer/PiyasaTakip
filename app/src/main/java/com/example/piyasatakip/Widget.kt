@@ -17,9 +17,9 @@ class Widget : AppWidgetProvider() {
     // Checks to see whether the intent's action is TOAST_ACTION. If it is, the app widget
     // displays a Toast message for the current item.
     override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action == TOAST_ACTION) {
-            var viewIndex = intent.getIntExtra(EXTRA_ITEM, 0)
-        }
+//        if (intent.action == TOAST_ACTION) {
+//            // toast action
+//        }
         super.onReceive(context, intent)
     }
 
@@ -28,7 +28,7 @@ class Widget : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-
+        DataHandler.loadData(context)
 
         super.onUpdate(context, appWidgetManager, appWidgetIds)
         // There may be multiple widgets active, so update all of them
@@ -52,9 +52,6 @@ class Widget : AppWidgetProvider() {
     companion object {
         const val TOAST_ACTION = "com.example.android.stackwidget.TOAST_ACTION"
         const val EXTRA_ITEM = "com.example.android.stackwidget.EXTRA_ITEM"
-        const val WIDGET_IDS = "Widget.WIDGET_IDS"
-        const val DOVIZ_ACTION = "Widget.Doviz"
-        const val HISSE_ACTION = "Widget.Hisse"
     }
 
     override fun onAppWidgetOptionsChanged(

@@ -112,7 +112,6 @@ class ItemAdapter(var items: MutableList<PiyasaBilgisi>) : RecyclerView.Adapter<
                     increase.setTextColor(ContextCompat.getColor(itemView.context, R.color.green))
                 }
             }
-
             handleFavIcon(info.isFav)
 
             // favori ikonuna listener atanıyor. Bu sayede tıkladğıımızda ikon değişiyor
@@ -122,9 +121,12 @@ class ItemAdapter(var items: MutableList<PiyasaBilgisi>) : RecyclerView.Adapter<
                 SavedPreference.saveFav(itemView.context, info.shortName, info.isFav)
             }
 
+            drawChart(info)
+        }
+
+        private fun drawChart(info: PiyasaBilgisi){
             // oluşturulan model chartviewa ekleniyor
             val chartModel = ChartHandler.setData(info)
-
             if (info.priceHistory.size > 1){
                 val overallDiff = info.priceHistory[info.priceHistory.size - 1] - info.priceHistory[0]
                 if (overallDiff < 0){
@@ -136,6 +138,10 @@ class ItemAdapter(var items: MutableList<PiyasaBilgisi>) : RecyclerView.Adapter<
 
             //chart.setImageBitmap(ChartHandler.getBitmapOfChart(info, itemView.context))
             chart.aa_drawChartWithChartModel(chartModel)
+        }
+
+        fun refreshChart(info: PiyasaBilgisi){
+            drawChart(info)
         }
 
 

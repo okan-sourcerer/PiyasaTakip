@@ -4,7 +4,8 @@
     android:id="@+id/widget_item_parent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/app_widget_background">
+    android:background="@drawable/app_widget_background"
+    android:theme="@android:style/Theme.DeviceDefault.DayNight">
 
     <LinearLayout
         android:id="@+id/widget_item_linear_textinfo"
