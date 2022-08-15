@@ -1,12 +1,15 @@
 package com.example.piyasatakip
 
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
+import androidx.core.view.get
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.piyasatakip.DataHandler.dovizList
@@ -21,6 +24,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var adapter: ItemAdapter
 
+    private var isSearchViewExpanded: Boolean = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -34,7 +39,10 @@ class MainActivity : AppCompatActivity() {
         handleViews()
         DataHandler.loadData(adapter, this)
         DataHandler.recycler = recyclerView
+        tabLayout.selectTab(tabLayout.getTabAt(SavedPreference.getTabPosition(applicationContext)))
         Log.d("MainActivity", "onCreate: after handleViews")
+
+        Log.d("MainActivity", "onCreate: is savedInstance null =? ${savedInstanceState == null}")
 
         // Toolbar yazı rengi uygulamanın genel hatlarına uygun olması için mavi renk yapılıyor.
         supportActionBar?.title = HtmlCompat.fromHtml("<font color=#ffffff>" + getString(R.string.app_name) + "</font>", HtmlCompat.FROM_HTML_MODE_LEGACY)
@@ -53,6 +61,7 @@ class MainActivity : AppCompatActivity() {
                 return true
             }
 
+            // on query change (text entered or removed) update the current list of items we can see using adapter.
             override fun onQueryTextChange(query: String?): Boolean {
                 Log.d("onQueryTextChange", "query: $query")
                 query?.let { adapter.filterSearch(it) }
@@ -64,12 +73,14 @@ class MainActivity : AppCompatActivity() {
             override fun onMenuItemActionCollapse(p0: MenuItem?): Boolean {
                 Log.d("MainActivity ", "onMenuItemActionCollapse: ")
                 adapter.restoreItems()
+                isSearchViewExpanded = false
                 return true
             }
 
             override fun onMenuItemActionExpand(p0: MenuItem?): Boolean {
                 Log.d("MainActivity ", "onMenuItemActionExpand: ")
                 adapter.backupItems()
+                isSearchViewExpanded = true
                 return true
             }
         })
@@ -142,11 +153,12 @@ class MainActivity : AppCompatActivity() {
         // Tab değiştirildiğinde her sayfaya özel veriler yükleniyor.
         tabLayout.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
+                SavedPreference.saveTabPosition(applicationContext, tabLayout.selectedTabPosition)
                 if (tabLayout.selectedTabPosition == 1){
-                    adapter.notifyListChange(hisseList)
+                    adapter.notifyListChange(hisseList, isSearchViewExpanded)
                 }
                 else{
-                    adapter.notifyListChange(dovizList)
+                    adapter.notifyListChange(dovizList, isSearchViewExpanded)
                 }
             }
             override fun onTabUnselected(tab: TabLayout.Tab?) {}

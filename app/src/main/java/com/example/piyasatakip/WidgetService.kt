@@ -9,7 +9,6 @@ import android.view.View
 import android.widget.RemoteViews
 import android.widget.RemoteViewsService
 import androidx.core.content.ContextCompat
-import com.google.firebase.storage.FirebaseStorage
 import java.util.*
 
 
@@ -27,27 +26,16 @@ class WidgetService : RemoteViewsService() {
         override fun onCreate() {
             println("onCreate() is called for $mAppWidgetId")
 
-            // In onCreate() you setup any connections / cursors to your data source. Heavy lifting,
-            // for example downloading or creating content etc, should be deferred to onDataSetChanged()
-            // or getViewAt(). Taking more than 20 seconds in this call will result in an ANR.
             Log.d("WidgetService", "addList: before ${DataHandler.dovizList.size} ${DataHandler.hisseList.size} ${mWidgetItems.size}")
 
+            // populate the list with all the items at first and then filter it by favourites.
+            // if there is no favourite in the list, just show currencies.
             addAllItems()
             Log.d("WidgetService", "addList: after ${DataHandler.dovizList.size} ${DataHandler.hisseList.size} ${mWidgetItems.size}")
-            // We sleep for 3 seconds here to show how the empty view appears in the interim.
-            // The empty view is set in the ListWidgetProvider and should be a sibling of the
-            // collection view.
-//            try {
-//                Thread.sleep(3000)
-//            } catch (e: InterruptedException) {
-//                e.printStackTrace()
-//            }
         }
 
         override fun onDestroy() {
             println("onDestroy() is called for $mAppWidgetId")
-            // In onDestroy() you should tear down anything that was setup for your data source,
-            // eg. cursors, connections, etc.
             mWidgetItems.clear()
         }
 
@@ -63,12 +51,10 @@ class WidgetService : RemoteViewsService() {
             println("getViewAt() is called for $mAppWidgetId")
             val info = mWidgetItems[position]
 
-
-            // position will always range from 0 to getCount() - 1.
-            // construct a remote views item based on our widget item xml file, and set the
-            // text based on the position.
             Log.d("WidgetService", "getViewAt: position = $position")
             val rv = RemoteViews(mContext.packageName, R.layout.widget_full_item)
+
+            // If we have the header object, display the message and return. Else show info about
             if (info.shortName == "Döviz" || info.shortName == "Hisse"){
                 rv.setTextViewText(R.id.widget_separator, info.shortName)
                 rv.setViewVisibility(R.id.widget_item_linear_textinfo, View.GONE)
@@ -87,6 +73,7 @@ class WidgetService : RemoteViewsService() {
             rv.setTextViewText(R.id.widget_text_item_full, info.fullName)
             rv.setTextViewText(R.id.widget_text_item_price, "₺${info.current}")
 
+            // if image exists for an info, load the image and set it as bitmap to the imageView
             if (info.imagePath != ""){
                 SavedPreference.getImagePath(mContext, info.shortName)
                     ?.let {
@@ -96,7 +83,6 @@ class WidgetService : RemoteViewsService() {
                             rv.setImageViewBitmap(R.id.widget_item_chart, bm)
                     }
             }
-
 
             val lastClose = info.priceHistory[info.priceHistory.size - 2]
             val current = info.current
@@ -116,6 +102,8 @@ class WidgetService : RemoteViewsService() {
 
             val options = AppWidgetManager.getInstance(mContext).getAppWidgetOptions(mAppWidgetId)
             Log.d("WidgetService", "getViewAt: Width = ${options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH)}")
+
+            // handle widget resizing. If size is big enough, show chart and info name, otherwise make them disappear
             if (options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH) < 220){
                 rv.setViewVisibility(R.id.widget_item_chart, View.GONE)
             }
@@ -188,6 +176,10 @@ class WidgetService : RemoteViewsService() {
             )
         }
 
+        /**
+         * Populate the list with all the info. Then add headers and filter by favourite status. If none
+         * exists, display currencies
+         */
         private fun addAllItems(){
             mWidgetItems.removeAll{true}
             mWidgetItems.add(PiyasaBilgisi("Döviz", "", mutableListOf(), "", 0.0, "", true))

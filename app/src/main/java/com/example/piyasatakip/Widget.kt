@@ -14,20 +14,20 @@ import android.widget.RemoteViews
 
 class Widget : AppWidgetProvider() {
     // Called when the BroadcastReceiver receives an Intent broadcast.
-    // Checks to see whether the intent's action is TOAST_ACTION. If it is, the app widget
-    // displays a Toast message for the current item.
+    // Check actions using intent.action and if statements to do perform specific actions.
     override fun onReceive(context: Context, intent: Intent) {
-//        if (intent.action == TOAST_ACTION) {
-//            // toast action
-//        }
         super.onReceive(context, intent)
     }
 
+    /**
+     * Automatically updates every 30 min or when widget is resized.
+     */
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
+        // load data for the widget.
         DataHandler.loadData(context)
 
         super.onUpdate(context, appWidgetManager, appWidgetIds)
@@ -54,6 +54,9 @@ class Widget : AppWidgetProvider() {
         const val EXTRA_ITEM = "com.example.android.stackwidget.EXTRA_ITEM"
     }
 
+    /**
+     * Called when widget is resized or device theme is changed. Updates the widget.
+     */
     override fun onAppWidgetOptionsChanged(
         context: Context?,
         appWidgetManager: AppWidgetManager?,

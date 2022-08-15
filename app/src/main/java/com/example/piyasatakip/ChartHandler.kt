@@ -1,8 +1,5 @@
 package com.example.piyasatakip
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.view.View
 import androidx.appcompat.app.AppCompatDelegate
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartModel
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartType
@@ -41,22 +38,16 @@ object ChartHandler {
         return chartModel
     }
 
+    /**
+     * Add data to the chart
+     */
     fun setData(data: PiyasaBilgisi): AAChartModel{
         return chartModel.series(arrayOf(AASeriesElement().data(data.priceHistory.toTypedArray())))
     }
 
-    fun loadBitmapFromView(v: View): Bitmap? {
-        val b = Bitmap.createBitmap(
-            v.width,
-            v.height,
-            Bitmap.Config.ARGB_8888
-        )
-        val c = Canvas(b)
-        v.layout(v.left, v.top, v.right, v.bottom)
-        v.draw(c)
-        return b
-    }
-
+    /**
+     * Toggle chart theme based on application theme.
+     */
     fun toggleChartTheme(){
         // uygulamanın temasına göre chart arka plan rengi de değiştiriliyor.
         if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES){
