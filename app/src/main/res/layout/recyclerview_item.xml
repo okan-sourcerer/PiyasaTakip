@@ -68,7 +68,7 @@
                 android:layout_marginTop="8dp"
                 android:textSize="13sp"
                 android:paddingStart="6dp"
-                android:textColor="?colorAccent"
+                android:textColor="?colorSecondary"
                 />
 
         </LinearLayout>

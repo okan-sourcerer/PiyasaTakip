@@ -7,6 +7,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.RemoteViews
@@ -98,7 +99,7 @@ class Widget : AppWidgetProvider() {
         intent.data = Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME))
         val toastPendingIntent = PendingIntent.getBroadcast(
             context, 0, toastIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
         views.setPendingIntentTemplate(R.id.list_view, toastPendingIntent)
 

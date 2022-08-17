@@ -24,7 +24,7 @@ object DataHandler {
     var dovizList: MutableList<PiyasaBilgisi> = mutableListOf()
 
     // verilerde güncelleme yapıldığında uygulama içerisinde güncellenmesi için fieldlar tutuluyor.
-    var adapter: ItemAdapter? = null
+    private var adapter: ItemAdapter? = null
     var recycler: RecyclerView? = null
 
     // uygulama veya widget açıldığında bir instance oluşturulacak. Veritabanından veriler çekilecek.

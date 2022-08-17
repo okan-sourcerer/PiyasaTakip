@@ -8,4 +8,5 @@
     <string name="placeholder_example_text">Example Text</string>
     <string name="favourite_icon">Favourite Icon</string>
     <string name="doviz">Döviz</string>
+    <string name="hisse">Hisse</string>
 </resources>

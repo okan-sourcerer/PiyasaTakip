@@ -17,23 +17,18 @@ object ChartHandler {
         // kısıtlı alana sahip olduğumuz için labellar kapatıldı. Info nesnesinin fiyat geçmişi listesi arraya dönüştürüldü.
         val chartModel = AAChartModel().chartType(AAChartType.Line)
 
-        // uygulamanın temasına göre chart arka plan rengi de değiştiriliyor.
-        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES){
-            chartModel.backgroundColor = "#424242"
-        }
-        else{
-            chartModel.backgroundColor = "#ffffff"
-        }
         chartModel.xAxisLabelsEnabled = false
         chartModel.yAxisLabelsEnabled = false
         chartModel.legendEnabled = false
         chartModel.dataLabelsEnabled = false
+        chartModel.xAxisVisible = false
         chartModel.markerRadius = 1f
+        chartModel.tooltipEnabled = false
 
         chartModel.yAxisTitle = ""
-        chartModel.xAxisVisible = false
         chartModel.yAxisGridLineWidth = 0
         chartModel.colorsTheme = arrayOf("#787878")
+        chartModel.backgroundColor = "#00000000" // transparent background
 
         return chartModel
     }
@@ -43,18 +38,5 @@ object ChartHandler {
      */
     fun setData(data: PiyasaBilgisi): AAChartModel{
         return chartModel.series(arrayOf(AASeriesElement().data(data.priceHistory.toTypedArray())))
-    }
-
-    /**
-     * Toggle chart theme based on application theme.
-     */
-    fun toggleChartTheme(){
-        // uygulamanın temasına göre chart arka plan rengi de değiştiriliyor.
-        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES){
-            chartModel.backgroundColor = "#424242"
-        }
-        else{
-            chartModel.backgroundColor = "#ffffff"
-        }
     }
 }

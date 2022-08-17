@@ -1,5 +1,6 @@
 package com.example.piyasatakip
 
+import android.annotation.SuppressLint
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.util.Log
@@ -39,6 +40,7 @@ class ItemAdapter(var items: MutableList<PiyasaBilgisi>) : RecyclerView.Adapter<
      * @param applyQuery if searchview is expanded, on tab change we need to change the list and apply the
      * query to that list as well
      */
+    @SuppressLint("NotifyDataSetChanged")
     fun notifyListChange(list: MutableList<PiyasaBilgisi>, applyQuery: Boolean){
         items = list
         updateBackup(list)
@@ -51,6 +53,7 @@ class ItemAdapter(var items: MutableList<PiyasaBilgisi>) : RecyclerView.Adapter<
      * To filter the list for the query entered from the searchView in @MainActivity.kt
      * Modifies the list for every input.
      */
+    @SuppressLint("NotifyDataSetChanged")
     fun filterSearch(query: String){
         Log.d("filterSearch", "query: $query")
 
@@ -92,6 +95,7 @@ class ItemAdapter(var items: MutableList<PiyasaBilgisi>) : RecyclerView.Adapter<
      * Called when search button is collapsed in main activity. When search bar is closed, we restore
      * the list from the backup and refresh the adapter to show all elements.
      */
+    @SuppressLint("NotifyDataSetChanged")
     fun restoreItems(){
         Log.d("restoreItems", "Restoring items. ${items.size} ${backupItems.size}")
         items.removeAll{true}
@@ -165,20 +169,26 @@ class ItemAdapter(var items: MutableList<PiyasaBilgisi>) : RecyclerView.Adapter<
         /**
          * Refreshes the view based on the updated values.
          */
+        @SuppressLint("SetTextI18n")
         fun refreshValues(info: PiyasaBilgisi){
-            price.text = info.current.toString()
+            price.text = "₺${info.current}"
             // if we have enough history data, we compare closing values etc to add colors to the difference text
             if (info.priceHistory.size > 2){
-                val lastClose = info.priceHistory[info.priceHistory.size - 2]
+                val lastClose = info.priceHistory[info.priceHistory.size - 1]
                 val current = info.current
                 val diff = current - lastClose
                 increase.text = String.format("%.2f", diff)
-                if (diff < 0){
+                if (increase.text == "0.00"){
                     increase.setTextColor(ContextCompat.getColor(itemView.context, R.color.brigthRed))
+                }else{
+                    if (diff < 0){
+                        increase.setTextColor(ContextCompat.getColor(itemView.context, R.color.brigthRed))
+                    }
+                    else if (diff > 0){
+                        increase.setTextColor(ContextCompat.getColor(itemView.context, R.color.green))
+                    }
                 }
-                else if (diff > 0){
-                    increase.setTextColor(ContextCompat.getColor(itemView.context, R.color.green))
-                }
+
             }
             drawChart(info)
         }

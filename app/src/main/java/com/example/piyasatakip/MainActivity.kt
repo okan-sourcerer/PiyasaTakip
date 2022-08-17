@@ -100,12 +100,10 @@ class MainActivity : AppCompatActivity() {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
                     delegate.applyDayNight()
                     SavedPreference.setChecktheme(applicationContext, SavedPreference.LIGHT_MODE)
-                    ChartHandler.toggleChartTheme()
                 } else {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
                     delegate.applyDayNight()
                     SavedPreference.setChecktheme(applicationContext, SavedPreference.DARK_MODE)
-                    ChartHandler.toggleChartTheme()
                 }
             }
         }

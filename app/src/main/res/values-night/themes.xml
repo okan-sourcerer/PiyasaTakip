@@ -6,6 +6,8 @@
         <item name="colorPrimaryVariant">#015AB8</item>
         <item name="colorOnPrimary">@color/white</item>
         <item name="titleTextColor">@color/blue</item>
+        <item name="backgroundColor">@color/black</item>
+
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/blue</item>
         <item name="colorSecondaryVariant">@color/greenDark</item>
