@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">Piyasa Takip</string>
     <string name="app_widget_description">This is an app widget description</string>
+    <string name="placeholder_difference">difference</string>
+    <string name="description_info_chart">Info Chart</string>
+    <string name="placeholder_price">Price</string>
+    <string name="placeholder_company_name">company name</string>
+    <string name="placeholder_example_text">Example Text</string>
+    <string name="favourite_icon">Favourite Icon</string>
+    <string name="doviz">Döviz</string>
+    <string name="hisse">Hisse</string>
 </resources>

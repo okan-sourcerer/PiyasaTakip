@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:loopViews="true"
-        android:layout_below="@id/logo"
+        android:layout_below="@id/widget_image_layout"
         />
 
 <!--    <TextView-->
@@ -29,13 +29,21 @@
 <!--        android:textStyle="bold" />-->
 
 
-    <ImageView
-        android:id="@+id/logo"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="35dp"
-        android:src="@drawable/ykstaj16"
-        android:backgroundTint="#0556A7"
-        android:scaleType="fitXY"
-        />
+        android:id="@+id/widget_image_layout"
+        android:background="@drawable/app_widget_inner_view_background"
+        >
+
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/ykstaj16"
+            android:scaleType="fitStart"
+            android:layout_marginStart="8dp"
+            />
+    </LinearLayout>
 
 </RelativeLayout>

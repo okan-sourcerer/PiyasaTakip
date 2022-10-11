@@ -7,6 +7,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.RemoteViews
@@ -14,21 +15,21 @@ import android.widget.RemoteViews
 
 class Widget : AppWidgetProvider() {
     // Called when the BroadcastReceiver receives an Intent broadcast.
-    // Checks to see whether the intent's action is TOAST_ACTION. If it is, the app widget
-    // displays a Toast message for the current item.
+    // Check actions using intent.action and if statements to do perform specific actions.
     override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action == TOAST_ACTION) {
-            var viewIndex = intent.getIntExtra(EXTRA_ITEM, 0)
-        }
         super.onReceive(context, intent)
     }
 
+    /**
+     * Automatically updates every 30 min or when widget is resized.
+     */
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray
     ) {
-
+        // load data for the widget.
+        DataHandler.loadData(context)
 
         super.onUpdate(context, appWidgetManager, appWidgetIds)
         // There may be multiple widgets active, so update all of them
@@ -52,11 +53,11 @@ class Widget : AppWidgetProvider() {
     companion object {
         const val TOAST_ACTION = "com.example.android.stackwidget.TOAST_ACTION"
         const val EXTRA_ITEM = "com.example.android.stackwidget.EXTRA_ITEM"
-        const val WIDGET_IDS = "Widget.WIDGET_IDS"
-        const val DOVIZ_ACTION = "Widget.Doviz"
-        const val HISSE_ACTION = "Widget.Hisse"
     }
 
+    /**
+     * Called when widget is resized or device theme is changed. Updates the widget.
+     */
     override fun onAppWidgetOptionsChanged(
         context: Context?,
         appWidgetManager: AppWidgetManager?,
@@ -98,7 +99,7 @@ class Widget : AppWidgetProvider() {
         intent.data = Uri.parse(intent.toUri(Intent.URI_INTENT_SCHEME))
         val toastPendingIntent = PendingIntent.getBroadcast(
             context, 0, toastIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
         views.setPendingIntentTemplate(R.id.list_view, toastPendingIntent)
 

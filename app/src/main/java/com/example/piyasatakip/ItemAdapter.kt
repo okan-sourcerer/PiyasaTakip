@@ -1,5 +1,6 @@
 package com.example.piyasatakip
 
+import android.annotation.SuppressLint
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.util.Log
@@ -16,6 +17,7 @@ import com.github.aachartmodel.aainfographics.aachartcreator.AAChartView
 class ItemAdapter(var items: MutableList<PiyasaBilgisi>) : RecyclerView.Adapter<ItemAdapter.ViewHolder>() {
 
     private var backupItems = mutableListOf<PiyasaBilgisi>()
+    private var lastQuery: String = ""
 
     // layout ilk oluşturulduğunda buraya gelecek. Görüldüğü gibi recyclerview_item.xml dosyasında belirtilen layout oluşturularak recyclerviewda gösterilmek üzere ekleniyor.
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -30,13 +32,28 @@ class ItemAdapter(var items: MutableList<PiyasaBilgisi>) : RecyclerView.Adapter<
     // listedeki toplam nesne sayısı
     override fun getItemCount() = items.size
 
-    // tablar arasında geçiş yaptığımızda listeyi de değiştiriyor.
-    fun notifyListChange(list: MutableList<PiyasaBilgisi>){
+    /**
+     * Used to change list of the adapter and notify the adapter for the current changes.
+     * Updates backup list.
+     * Called from tab changes.
+     * @param list new list for the adapter.
+     * @param applyQuery if searchview is expanded, on tab change we need to change the list and apply the
+     * query to that list as well
+     */
+    @SuppressLint("NotifyDataSetChanged")
+    fun notifyListChange(list: MutableList<PiyasaBilgisi>, applyQuery: Boolean){
         items = list
-        notifyDataSetChanged()
         updateBackup(list)
+        if (applyQuery)
+            filterSearch(lastQuery)
+        notifyDataSetChanged()
     }
 
+    /**
+     * To filter the list for the query entered from the searchView in @MainActivity.kt
+     * Modifies the list for every input.
+     */
+    @SuppressLint("NotifyDataSetChanged")
     fun filterSearch(query: String){
         Log.d("filterSearch", "query: $query")
 
@@ -47,6 +64,7 @@ class ItemAdapter(var items: MutableList<PiyasaBilgisi>) : RecyclerView.Adapter<
         }
         Log.d("filterSearch", "List items  ${items.size} ${backupItems.size}")
 
+        // filter by shortname of full name
         if (query.isNotEmpty())
             items = items.filter {
                 it.fullName.contains(query, true) || it.shortName.contains(query, true)
@@ -55,8 +73,14 @@ class ItemAdapter(var items: MutableList<PiyasaBilgisi>) : RecyclerView.Adapter<
         Log.d("filterSearch", "List backup elements ${backupItems.size}")
 
         notifyDataSetChanged()
+        lastQuery = query
     }
 
+    /**
+     * Called when search button is pressed in the main activity to expand. Expanding the search button will
+     * trigger this method to backup the list in case of search query being entered. Filtering will remove items from the
+     * list. This list will be used to restore the removed items.
+     */
     fun backupItems(){
         Log.d("backupItems", "backing up items.   ${items.size} ${backupItems.size}")
         backupItems.removeAll { true }
@@ -67,6 +91,11 @@ class ItemAdapter(var items: MutableList<PiyasaBilgisi>) : RecyclerView.Adapter<
         Log.d("backupItems", "backing up items 3.0   ${items.size} ${backupItems.size}")
     }
 
+    /**
+     * Called when search button is collapsed in main activity. When search bar is closed, we restore
+     * the list from the backup and refresh the adapter to show all elements.
+     */
+    @SuppressLint("NotifyDataSetChanged")
     fun restoreItems(){
         Log.d("restoreItems", "Restoring items. ${items.size} ${backupItems.size}")
         items.removeAll{true}
@@ -76,6 +105,9 @@ class ItemAdapter(var items: MutableList<PiyasaBilgisi>) : RecyclerView.Adapter<
         notifyDataSetChanged()
     }
 
+    /**
+     * Update backup when tab is switched.
+     */
     private fun updateBackup(items: MutableList<PiyasaBilgisi>){
         backupItems.removeAll{true}
         items.forEach{
@@ -99,20 +131,8 @@ class ItemAdapter(var items: MutableList<PiyasaBilgisi>) : RecyclerView.Adapter<
             // döviz/hisse senedi isimleriyle ilgili değişkenler atanıyor
             shortName.text = info.shortName
             fullName.text = info.fullName
-            price.text = "₺${info.current}"
-            if (info.priceHistory.size > 2){
-                val lastClose = info.priceHistory[info.priceHistory.size - 2]
-                val current = info.current
-                val diff = current - lastClose
-                increase.text = String.format("%.2f", diff)
-                if (diff < 0){
-                    increase.setTextColor(ContextCompat.getColor(itemView.context, R.color.brigthRed))
-                }
-                else if (diff > 0){
-                    increase.setTextColor(ContextCompat.getColor(itemView.context, R.color.green))
-                }
-            }
 
+            refreshValues(info)
             handleFavIcon(info.isFav)
 
             // favori ikonuna listener atanıyor. Bu sayede tıkladğıımızda ikon değişiyor
@@ -120,11 +140,19 @@ class ItemAdapter(var items: MutableList<PiyasaBilgisi>) : RecyclerView.Adapter<
                 info.isFav = !info.isFav
                 handleFavIcon(info.isFav)
                 SavedPreference.saveFav(itemView.context, info.shortName, info.isFav)
+                DataHandler.sortLists()
             }
 
+            drawChart(info)
+        }
+
+        /**
+         * Draw chart using chartmodel created in ChartHandler class and info. Change graph color based on
+         * first and the last values in the graph.
+         */
+        private fun drawChart(info: PiyasaBilgisi){
             // oluşturulan model chartviewa ekleniyor
             val chartModel = ChartHandler.setData(info)
-
             if (info.priceHistory.size > 1){
                 val overallDiff = info.priceHistory[info.priceHistory.size - 1] - info.priceHistory[0]
                 if (overallDiff < 0){
@@ -138,6 +166,32 @@ class ItemAdapter(var items: MutableList<PiyasaBilgisi>) : RecyclerView.Adapter<
             chart.aa_drawChartWithChartModel(chartModel)
         }
 
+        /**
+         * Refreshes the view based on the updated values.
+         */
+        @SuppressLint("SetTextI18n")
+        fun refreshValues(info: PiyasaBilgisi){
+            price.text = "₺${info.current}"
+            // if we have enough history data, we compare closing values etc to add colors to the difference text
+            if (info.priceHistory.size > 2){
+                val lastClose = info.priceHistory[info.priceHistory.size - 1]
+                val current = info.current
+                val diff = current - lastClose
+                increase.text = String.format("%.2f", diff)
+                if (increase.text == "0.00"){
+                    increase.setTextColor(ContextCompat.getColor(itemView.context, R.color.brigthRed))
+                }else{
+                    if (diff < 0){
+                        increase.setTextColor(ContextCompat.getColor(itemView.context, R.color.brigthRed))
+                    }
+                    else if (diff > 0){
+                        increase.setTextColor(ContextCompat.getColor(itemView.context, R.color.green))
+                    }
+                }
+
+            }
+            drawChart(info)
+        }
 
         // döviz/ hisse senedinin favoriye eklenmesi durumunda ikondaki değişiklik sağlanıyor.
         private fun handleFavIcon(isFav: Boolean){

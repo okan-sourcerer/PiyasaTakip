@@ -51,15 +51,9 @@ dependencies {
 
     implementation 'androidx.preference:preference:1.2.0'
     implementation 'com.github.AAChartModel:AAChartCore-Kotlin:-SNAPSHOT'
-    implementation 'com.github.AnyChart:AnyChart-Android:1.1.2'
 
     implementation platform('com.google.firebase:firebase-bom:26.3.0')
     implementation 'com.google.firebase:firebase-database-ktx'
 
-    implementation 'com.github.bumptech.glide:glide:4.13.2'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.13.2'
     implementation 'com.google.firebase:firebase-storage-ktx'
-
-    implementation 'com.squareup.picasso:picasso:2.8'
-
 }

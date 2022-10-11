@@ -1,8 +1,5 @@
 package com.example.piyasatakip
 
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.view.View
 import androidx.appcompat.app.AppCompatDelegate
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartModel
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartType
@@ -20,50 +17,26 @@ object ChartHandler {
         // kısıtlı alana sahip olduğumuz için labellar kapatıldı. Info nesnesinin fiyat geçmişi listesi arraya dönüştürüldü.
         val chartModel = AAChartModel().chartType(AAChartType.Line)
 
-        // uygulamanın temasına göre chart arka plan rengi de değiştiriliyor.
-        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES){
-            chartModel.backgroundColor = "#424242"
-        }
-        else{
-            chartModel.backgroundColor = "#ffffff"
-        }
         chartModel.xAxisLabelsEnabled = false
         chartModel.yAxisLabelsEnabled = false
         chartModel.legendEnabled = false
         chartModel.dataLabelsEnabled = false
+        chartModel.xAxisVisible = false
         chartModel.markerRadius = 1f
+        chartModel.tooltipEnabled = false
 
         chartModel.yAxisTitle = ""
-        chartModel.xAxisVisible = false
         chartModel.yAxisGridLineWidth = 0
         chartModel.colorsTheme = arrayOf("#787878")
+        chartModel.backgroundColor = "#00000000" // transparent background
 
         return chartModel
     }
 
+    /**
+     * Add data to the chart
+     */
     fun setData(data: PiyasaBilgisi): AAChartModel{
         return chartModel.series(arrayOf(AASeriesElement().data(data.priceHistory.toTypedArray())))
-    }
-
-    fun loadBitmapFromView(v: View): Bitmap? {
-        val b = Bitmap.createBitmap(
-            v.width,
-            v.height,
-            Bitmap.Config.ARGB_8888
-        )
-        val c = Canvas(b)
-        v.layout(v.left, v.top, v.right, v.bottom)
-        v.draw(c)
-        return b
-    }
-
-    fun toggleChartTheme(){
-        // uygulamanın temasına göre chart arka plan rengi de değiştiriliyor.
-        if (AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES){
-            chartModel.backgroundColor = "#424242"
-        }
-        else{
-            chartModel.backgroundColor = "#ffffff"
-        }
     }
 }
